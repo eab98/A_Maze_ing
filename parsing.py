@@ -1,67 +1,77 @@
+from pydantic import BaseModel, Field, model_validator, field_validator
+from pydantic import ValidationError
+
+
+class MazeConfig(BaseModel):
+    width: int = Field(..., gt=0)
+    height: int = Field(..., gt=0)
+    entry: tuple[int, int] = Field(...)
+    exit: tuple[int, int] = Field(...)
+    output_file: str = Field(..., min_length=1)
+    perfect: bool = Field(...)
+
+
+    @field_validator('entry', 'exit', mode='before')
+    @classmethod
+    def parse_coordinates(cls, value: str) -> tuple[int, int]:
+        parts = value.split(',')
+        if len(parts) != 2:
+            raise ValueError("Coordinates must be formatted as 'x,y'")
+        return int(parts[0].strip()), int(parts[1].strip())
+
+    @field_validator('perfect', mode='before')
+    @classmethod
+    def perfect_check(cls, value: str) -> bool:
+        val_lower = value.strip().lower()
+        if val_lower == 'true':
+            return True
+        elif val_lower == 'false':
+            return False
+        else:
+            raise ValueError("PERFECT must be 'true' or 'false' (case-insensitive)")
+
+    @model_validator(mode='after')
+    def check_coordinates(self) -> 'MazeConfig':
+        entry_x, entry_y = self.entry
+        exit_x, exit_y = self.exit
+
+        if not (0 <= entry_x < self.width) or not (0 <= entry_y < self.height):
+            raise ValueError(f"ENTRY coordinates {self.entry} are out of bounds for a {self.w}x{self.height} maze.")
+
+        if not (0 <= exit_x < self.width) or not (0 <= exit_y < self.height):
+            raise ValueError(f"EXIT coordinates {self.exit} are out of bounds for a {self.width}x{self.height} maze.")
+
+        return self
+
+
+def load_config(filepath: str) -> MazeConfig:
+    config_dict = {}
+
+    with open(filepath, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, val = line.split('=', 1)
+                config_dict[key.strip().lower()] = val.strip()
+    return MazeConfig(**config_dict)
+
+
+
+
 if __name__ == "__main__":
-    with open("config.txt") as file:
-        lines = sum(1 for line in file)
-        print("Total number of lines:", lines)
-# Security Width
-    with open("config.txt") as vtf:
-        line = vtf.readline(6)
-        if (line == "WIDTH="):
-            try:
-                test = int(vtf.readline())
-                print(test)
-            except Exception as e:
-                print(e)
-# Security Height
-        line = vtf.readline(7)
-        if (line == "HEIGHT="):
-            try:
-                test = int(vtf.readline())
-                print(test)
-            except Exception as e:
-                print(e)
-# Security Entry
-        line = vtf.readline(6)
-        if line == "ENTRY=":
-            fleuri = vtf.readline().split(',')
-            coord: list[int] = []
-            try:
-                for i in range(len(fleuri)):
-                    try:
-                        coord = coord + [int(fleuri[i])]
-                    except ValueError as ve:
-                        print(ve)
-                coords = (coord[0], coord[1])
-            except Exception as ex:
-                print(ex)
-            else:
-                print(coords)
-# Security Exit
-        line = vtf.readline(5)
-        if line == "EXIT=":
-            feneant = vtf.readline().split(',')
-            cord: list[int] = []
-            try:
-                for i in range(len(feneant)):
-                    try:
-                        cord = cord + [int(feneant[i])]
-                    except ValueError as ve:
-                        print(ve)
-                cords = (cord[0], cord[1])
-            except Exception as ex:
-                print(ex)
-            else:
-                print(cords)
-# Security Output_File
-        line = vtf.readline(12)
-        if (line == "OUTPUT_FILE="):
-            stout = vtf.readline().strip()
-            print(stout)
-# security Perfect
-        line = vtf.readline(8)
-        if (line == "PERFECT="):
-            oemaiseh = False
-            trueorfalse = vtf.readline()
-            if (trueorfalse == "True"):
-                oemaiseh = True
-            if oemaiseh is True:
-                print(oemaiseh)
+    try:
+        config = load_config("config.txt")
+        print("Configuration loaded successfully!\n")
+
+        print(f"Width: {config.width}")
+        print(f"Height: {config.height}")
+        print(f"Entry: {config.entry}")
+        print(f"Exit: {config.exit}")
+        print(f"Output File: {config.output_file}")
+        print(f"Perfect: {config.perfect}")
+
+    except ValidationError as e:
+        print("Error: Invalid configuration data.\n")
+        print(e)
+    except FileNotFoundError:
+        print("Error: 'config.txt' could not be found.")

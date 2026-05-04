@@ -47,14 +47,14 @@ def create_maze(height, width):
     return maze
 
 
-def shared_north(maze, width, height, x, y):
-    if y > 0 and maze[x][y - 1].south == 1:
+def shared_north(maze, x, y):
+    if y > 0 and maze[y][x - 1].south == 1:
         return True
     return False
 
 
-def shared_west(maze, width, height, x, y):
-    if x > 0 and maze[x - 1][y].east == 1:
+def shared_west(maze,  x, y):
+    if x > 0 and maze[y - 1][x].east == 1:
         return True
     return False
 
@@ -62,31 +62,39 @@ def shared_west(maze, width, height, x, y):
 def print_maze(maze, height, width):
     for y in range(height):
         for x in range(width):
-            if maze[x][y].north == 1 and not shared_north(maze, width, 
-                                                          height, x, y):
-                if x < width - 1:
-                    print(" ---", end="")
-                else:
-                    print(" ---")
-        for x in range(width):
-            if maze[x][y].west == 1 and not shared_west(maze, width,
-                                                        height, x, y):
-                print("|", end="")
+            if maze[y][x].north == 1:
+                print("+--", end="")
+            else:
+                print("+  ", end="")
+        print("+")
 
         for x in range(width):
-            if maze[x][y].east == 1:
-                if x < width - 1:
-                    print("   |", end="")
-                else:
-                    print("   |")
-        for x in range(width):
-            if maze[x][y].south == 1:
-                if x < width - 1:
-                    print(" ---", end="")
-                else:
-                    print(" ---")
+            if maze[y][x].west == 1:
+                print("|  ", end="")
+            else:
+                print("   ", end="")
+        if maze[y][width-1].east == 1:
+            print("|")
+        else:
+            print(" ")
+            
+    for x in range(width):
+        if maze[height-1][x].south == 1:
+            print("+--", end="")
+        else:
+            print("+  ", end="")
+    print("+")
 
 
 if __name__ == "__main__":
-    maze = create_maze(10, 10)
-    print_maze(maze, 10, 10)
+    height = 10
+    width = 10
+    maze = create_maze(height, width)
+    y, x = 5, 3
+    if x + 1 < width:
+        maze[y][x].east = 0
+        maze[y][x+1].west = 0
+    if y + 1 < height:
+        maze[y][x].south = 0
+        maze[y+1][x].north = 0
+    print_maze(maze, height, width)

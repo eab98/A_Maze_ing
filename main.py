@@ -65,9 +65,9 @@ def print_maze(maze, height, width):
             if maze[x][y].north == 1 and not shared_north(maze, width, 
                                                           height, x, y):
                 if x < width - 1:
-                    print("+---", end="")
+                    print("+--", end="")
                 else:
-                    print("+---+")
+                    print("+--+")
         for x in range(width):
             if maze[y][x].west == 1 and not shared_west(maze, width,
                                                         height, x, y):
@@ -76,17 +76,17 @@ def print_maze(maze, height, width):
         for x in range(width):
             if maze[y][x].east == 1:
                 if x < width - 1:
-                    print("   |", end="")
+                    print("  |", end="")
                 else:
-                    print("   |")
+                    print("  |")
         for x in range(width):
             if maze[y][x].south == 1:
                 if x < width - 1:
-                    print("+---", end="")
+                    print("+--", end="")
                 else:
-                    print("+---+")
+                    print("+--+")
 
 
 if __name__ == "__main__":
-    maze = create_maze(20, 20)
-    print_maze(maze, 20, 20)
+    maze = create_maze(5, 5)
+    print_maze(maze, 5, 5)

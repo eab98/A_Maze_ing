@@ -1,40 +1,4 @@
-class Cell:
-    def __init__(self, n, s, e, w):
-        self.north = n
-        self.south = s
-        self.east = e
-        self.west = w
-        self.visited = False
-
-    def get_north(self) -> int:
-        return self.__north
-
-    def set_north(self, state: int) -> None:
-        self.__north = state
-
-    def get_south(self) -> int:
-        return self.__south
-
-    def set_south(self, state: int) -> None:
-        self.__south = state
-
-    def get_east(self) -> int:
-        return self.__east
-
-    def set_east(self, state: int) -> None:
-        self.__east = state
-
-    def get_west(self) -> int:
-        return self.__west
-
-    def set_west(self, state: int) -> None:
-        self.__west = state
-
-    def is_visited(self) -> bool:
-        return self.__visited
-
-    def visit(self) -> None:
-        self.__visited = True
+from mazegen import Cell
 
 
 def create_maze(height, width):

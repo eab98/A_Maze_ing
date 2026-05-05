@@ -1,25 +1,11 @@
-def print_maze(maze, height, width):
-    for y in range(height):
-        for x in range(width):
-            if maze[y][x].north == 1:
-                print("+--", end="")
-            else:
-                print("+  ", end="")
-        print("+")
+import curses
 
-        for x in range(width):
-            if maze[y][x].west == 1:
-                print("|  ", end="")
-            else:
-                print("   ", end="")
-        if maze[y][width-1].east == 1:
-            print("|")
-        else:
-            print(" ")
-            
-    for x in range(width):
-        if maze[height-1][x].south == 1:
-            print("+--", end="")
-        else:
-            print("+  ", end="")
-    print("+")
+def main(stdscr):
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    stdscr.clear()
+    stdscr.addstr(0, 0, "Just for the test", curses.color_pair(1) | curses.A_BOLD)
+    stdscr.refresh()
+    stdscr.getch()
+
+curses.wrapper(main)

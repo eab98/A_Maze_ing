@@ -1,5 +1,5 @@
 from mazegen import Cell
-
+import curses
 
 def create_maze(height, width):
     maze = []
@@ -51,14 +51,18 @@ def print_maze(maze, height, width):
 
 
 if __name__ == "__main__":
-    height = 10
-    width = 10
+    height = 5
+    width = 5
+
     maze = create_maze(height, width)
-    y, x = 5, 3
+    y, x = 2, 2
     if x + 1 < width:
         maze[y][x].east = 0
-        maze[y][x+1].west = 0
+        maze[y][x + 1].west = 0
+
     if y + 1 < height:
         maze[y][x].south = 0
-        maze[y+1][x].north = 0
-    print_maze(maze, height, width)
+        maze[y + 1][x].north = 0
+ 
+print_maze(maze, height, width)
+

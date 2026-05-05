@@ -1,106 +1,15 @@
-from mazegen import Cell
-import curses
-import time
-import sys
+from mazegen import MazeGenerator
+from visualizer import print_maze
+from parsing import load_config
 
-def create_maze(height, width):
-    maze = []
-    for i in range(height):
-        line = []
-        for i in range(width):
-            line.append(Cell(1, 1, 1, 1))
-        maze.append(line)
-    return maze
-
-
-def shared_north(maze, x, y):
-    if y > 0 and maze[y][x - 1].south == 1:
-        return True
-    return False
-
-
-def shared_west(maze,  x, y):
-    if x > 0 and maze[y - 1][x].east == 1:
-        return True
-    return False
-
-
-def print_maze(stdsrc, maze, height, width):
-    stdsrc.clear()
-    try:
-        for y in range(height):
-            for x in range(width):
-                stdsrc.addstr("+--" if maze[y][x].north == 1 else "+  ")
-            stdsrc.addstr("+")
-            curr_y, _ = stdsrc.getyx()
-            stdsrc.move(curr_y + 1, 0)
-
-            for x in range(width):
-                stdsrc.addstr("|  " if maze[y][x].west == 1 else "   ")
-                
-            if maze[y][width-1].east == 1:
-                stdsrc.addstr("|")
-            
-            curr_y, _ = stdsrc.getyx()
-            stdsrc.move(curr_y + 1, 0)
-
-        for x in range(width):
-                stdsrc.addstr("+--" if maze[height-1][x].south == 1 else "+  ")
-        stdsrc.addstr("+")
-
-    except curses.error:
-        pass
-    stdsrc.refresh()
-
-def loading_animation(duration=20):
-    for i in range(duration + 1):
-        percent = (i / duration) * 100
-        bar = '█' * i + '-' * (duration - i)
-        sys.stdout.write(f'\rRécupération des données : |{bar}| {percent:.0f}%')
-        sys.stdout.flush()
-        time.sleep(0.1)
-    print("\nTerminé ! 🎉")
-
-def scanner_line(text, width=20, duration=5):
-    start_time = time.time()
-    
-    while time.time() - start_time < duration:
-        for j in range(width):
-            if time.time() - start_time >= duration: break
-            path = [' '] * width
-            path[j] = "●"
-            display = "".join(path)
-            sys.stdout.write(f'\r{text} [{display}]')
-            sys.stdout.flush()
-            time.sleep(0.05)
-        for j in range(width-1, -1, -1):
-            if time.time() - start_time >= duration: break
-            path = [' '] * width
-            path[j] = "●"
-            display = "".join(path)
-            sys.stdout.write(f'\r{text} [{display}]')
-            sys.stdout.flush()
-            time.sleep(0.02)
-            
-    print(f"\n{text} [OK]")
-
-def main(stdsrc):
-    height = 5
-    width = 5
-    maze = create_maze(height, width)
-    y, x = 2, 2
-    if x + 1 < width:
-        maze[y][x].east = 0
-        maze[y][x + 1].west = 0
-
-    if y + 1 < height:
-        maze[y][x].south = 0
-        maze[y + 1][x].north = 0
-    scanner_line("AMAZING")
-    loading_animation()
-    print_maze(stdsrc, maze, height, width)
-    stdsrc.addstr("\nPress any key to exit...")
-    stdsrc.getch()
 
 if __name__ == "__main__":
-    curses.wrapper(main)
+    config = load_config("config.txt")
+    mazeGen = MazeGenerator(config.height,
+                            config.width,
+                            config.entry,
+                            config.exit,
+                            config.perfect,
+                            config.seed)
+    maze = mazeGen.generate_maze()
+    print_maze(maze, config.height, config.width)

@@ -1,9 +1,13 @@
+from collections import deque
+import random
+
 class Cell:
-    def __init__(self, n, s, e, w):
-        self.north = n
-        self.south = s
-        self.east = e
-        self.west = w
+    def __init__(self, x: int, y: int):
+        self.north = 1
+        self.south = 1
+        self.east = 1
+        self.west = 1
+        self.coords = (x, y)
         self.visited = False
 
     def is_visited(self) -> bool:
@@ -15,12 +19,14 @@ class Cell:
 
 class MazeGenerator:
     def __init__(self, height: int, width: int, entry: tuple[int, int],
-                 exit: tuple[int, int], perfect: bool, seed: int) -> None:
+                 exit: tuple[int, int], perfect: bool,
+                 seed: int | None) -> None:
         self.height = height
         self.width = width
         self.entry = entry
         self.exit = exit
         self.perfect = perfect
+        self.seed = random.Random(seed)
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """
@@ -31,9 +37,55 @@ class MazeGenerator:
         for y in range(self.height):
             maze.append([])
             for x in range(self.width):
-                maze[y].append(Cell(1, 1, 1, 1))
+                maze[y].append(Cell(x, y))
         return maze
-    
+
+    def get_neighbour(self, cell: Cell, maze: list[list[Cell]]) -> Cell | None:
+        neighbours = []
+        cell_x, cell_y = cell.coords
+        if cell_x < self.width - 1 and not maze[cell_y][cell_x + 1].visited:
+           neighbours.append(maze[cell_y][cell_x + 1])
+        if cell_y < self.height - 1 and not maze[cell_y + 1][cell_x].visited:
+            neighbours.append(maze[cell_y + 1][cell_x])
+        if cell_x > 0 and not maze[cell_y][cell_x - 1].visited:
+            neighbours.append(maze[cell_y][cell_x - 1])
+        if cell_y > 0 and not maze[cell_y - 1][cell_x].visited:
+            neighbours.append(maze[cell_y - 1][cell_x])
+        if len(neighbours) > 0:
+            return self.seed.choice(neighbours)
+        return None
+
+    def break_wall(self, current: Cell, neighbour: Cell) -> None:
+        current_x, current_y = current.coords
+        neighbour_x, neighbour_y = neighbour.coords
+
+        if current_x < neighbour_x:
+            current.east = 0
+            neighbour.west = 0
+        elif current_x > neighbour_x:
+            current.west = 0
+            neighbour.east = 0
+        elif current_y < neighbour_y:
+            current.south = 0
+            neighbour.north = 0
+        elif current_y > neighbour_y:
+            current.north = 0
+            neighbour.south = 0
+
     def generate_maze(self) -> list[list[Cell]]:
        maze = self.generate_starting_maze()
+       current = maze[0][0]
+       current.visit()
+       visited = deque()
+       while current is not None:
+           neighbour = self.get_neighbour(current, maze)
+           if neighbour is not None:
+               self.break_wall(current, neighbour)
+               neighbour.visit()
+               visited.append(current)
+               current = neighbour
+           elif len(visited) > 0:
+               current = visited.pop()
+           else:
+               break
        return maze

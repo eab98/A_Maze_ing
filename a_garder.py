@@ -19,14 +19,11 @@ def loading_animation(duration=20):
     for i in range(duration + 1):
         percent = (i / duration) * 100
         bar = '█' * i + '-' * (duration - i)
-        # \r permet de revenir au début de la ligne sans sauter à la suivante
         sys.stdout.write(f'\rRécupération des données : |{bar}| {percent:.0f}%')
         sys.stdout.flush()
         time.sleep(0.1)
     print("\nTerminé ! 🎉")
     
-# scanner line :
-
 import sys
 import time
 

@@ -1,5 +1,7 @@
 from mazegen import Cell
 import curses
+import time
+import sys
 
 def create_maze(height, width):
     maze = []
@@ -23,37 +25,68 @@ def shared_west(maze,  x, y):
     return False
 
 
-def print_maze(maze, height, width):
-    for y in range(height):
-        for x in range(width):
-            if maze[y][x].north == 1:
-                print("+--", end="")
-            else:
-                print("+  ", end="")
-        print("+")
+def print_maze(stdsrc, maze, height, width):
+    stdsrc.clear()
+    try:
+        for y in range(height):
+            for x in range(width):
+                stdsrc.addstr("+--" if maze[y][x].north == 1 else "+  ")
+            stdsrc.addstr("+")
+            curr_y, _ = stdsrc.getyx()
+            stdsrc.move(curr_y + 1, 0)
 
-        for x in range(width):
-            if maze[y][x].west == 1:
-                print("|  ", end="")
-            else:
-                print("   ", end="")
-        if maze[y][width-1].east == 1:
-            print("|")
-        else:
-            print(" ")
+            for x in range(width):
+                stdsrc.addstr("|  " if maze[y][x].west == 1 else "   ")
+                
+            if maze[y][width-1].east == 1:
+                stdsrc.addstr("|")
             
-    for x in range(width):
-        if maze[height-1][x].south == 1:
-            print("+--", end="")
-        else:
-            print("+  ", end="")
-    print("+")
+            curr_y, _ = stdsrc.getyx()
+            stdsrc.move(curr_y + 1, 0)
 
+        for x in range(width):
+                stdsrc.addstr("+--" if maze[height-1][x].south == 1 else "+  ")
+        stdsrc.addstr("+")
 
-if __name__ == "__main__":
+    except curses.error:
+        pass
+    stdsrc.refresh()
+
+def loading_animation(duration=20):
+    for i in range(duration + 1):
+        percent = (i / duration) * 100
+        bar = '█' * i + '-' * (duration - i)
+        sys.stdout.write(f'\rRécupération des données : |{bar}| {percent:.0f}%')
+        sys.stdout.flush()
+        time.sleep(0.1)
+    print("\nTerminé ! 🎉")
+
+def scanner_line(text, width=20, duration=5):
+    start_time = time.time()
+    
+    while time.time() - start_time < duration:
+        for j in range(width):
+            if time.time() - start_time >= duration: break
+            path = [' '] * width
+            path[j] = "●"
+            display = "".join(path)
+            sys.stdout.write(f'\r{text} [{display}]')
+            sys.stdout.flush()
+            time.sleep(0.05)
+        for j in range(width-1, -1, -1):
+            if time.time() - start_time >= duration: break
+            path = [' '] * width
+            path[j] = "●"
+            display = "".join(path)
+            sys.stdout.write(f'\r{text} [{display}]')
+            sys.stdout.flush()
+            time.sleep(0.02)
+            
+    print(f"\n{text} [OK]")
+
+def main(stdsrc):
     height = 5
     width = 5
-
     maze = create_maze(height, width)
     y, x = 2, 2
     if x + 1 < width:
@@ -63,6 +96,11 @@ if __name__ == "__main__":
     if y + 1 < height:
         maze[y][x].south = 0
         maze[y + 1][x].north = 0
- 
-print_maze(maze, height, width)
+    scanner_line("AMAZING")
+    loading_animation()
+    print_maze(stdsrc, maze, height, width)
+    stdsrc.addstr("\nPress any key to exit...")
+    stdsrc.getch()
 
+if __name__ == "__main__":
+    curses.wrapper(main)

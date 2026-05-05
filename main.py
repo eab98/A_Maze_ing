@@ -1,9 +1,10 @@
 from mazegen import MazeGenerator
-from visualizer import print_maze
+import curses
+from visualizer import print_maze, loading_animation, scanner_line
 from parsing import load_config
 
 
-if __name__ == "__main__":
+def main(stdsrc):
     config = load_config("config.txt")
     mazeGen = MazeGenerator(config.height,
                             config.width,
@@ -12,4 +13,10 @@ if __name__ == "__main__":
                             config.perfect,
                             config.seed)
     maze = mazeGen.generate_maze()
-    print_maze(maze, config.height, config.width)
+    scanner_line("AMAZING")
+    loading_animation()
+    print_maze(stdsrc, maze, config.height, config.width)
+    stdsrc.getch()
+
+if __name__ == "__main__":
+    curses.wrapper(main)

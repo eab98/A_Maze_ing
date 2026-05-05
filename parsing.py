@@ -57,13 +57,10 @@ def load_config(filepath: str) -> MazeConfig:
     return MazeConfig(**config_dict)
 
 
-
-
 if __name__ == "__main__":
     try:
         config = load_config("config.txt")
         print("Configuration loaded successfully!\n")
-
         print(f"Width: {config.width}")
         print(f"Height: {config.height}")
         print(f"Entry: {config.entry}")

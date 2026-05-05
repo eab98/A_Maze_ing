@@ -9,6 +9,7 @@ class MazeConfig(BaseModel):
     exit: tuple[int, int] = Field(...)
     output_file: str = Field(..., min_length=1)
     perfect: bool = Field(...)
+    seed: int | None = Field(default=None)
 
 
     @field_validator('entry', 'exit', mode='before')
@@ -69,6 +70,7 @@ if __name__ == "__main__":
         print(f"Exit: {config.exit}")
         print(f"Output File: {config.output_file}")
         print(f"Perfect: {config.perfect}")
+        print(f"Seed: {config.seed}")
 
     except ValidationError as e:
         print("Error: Invalid configuration data.\n")

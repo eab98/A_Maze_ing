@@ -1,3 +1,6 @@
+from mazegen import MazeGenerator
+
+
 def print_maze(maze, height, width):
     for y in range(height):
         for x in range(width):
@@ -23,3 +26,9 @@ def print_maze(maze, height, width):
         else:
             print("+  ", end="")
     print("+")
+
+
+if __name__ == "__main__":
+    mazeGen = MazeGenerator(21, 63,(0,0), (15,15), True, 42)
+    maze = mazeGen.generate_maze()
+    print_maze(maze, mazeGen.height, mazeGen.width)

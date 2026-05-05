@@ -19,12 +19,14 @@ class Cell:
 
 class MazeGenerator:
     def __init__(self, height: int, width: int, entry: tuple[int, int],
-                 exit: tuple[int, int], perfect: bool) -> None:
+                 exit: tuple[int, int], perfect: bool,
+                 seed: int | None) -> None:
         self.height = height
         self.width = width
         self.entry = entry
         self.exit = exit
         self.perfect = perfect
+        self.seed = random.Random(seed)
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """
@@ -50,7 +52,7 @@ class MazeGenerator:
         if cell_y > 0 and not maze[cell_y - 1][cell_x].visited:
             neighbours.append(maze[cell_y - 1][cell_x])
         if len(neighbours) > 0:
-            return random.choice(neighbours)
+            return self.seed.choice(neighbours)
         return None
 
     def break_wall(self, current: Cell, neighbour: Cell) -> None:

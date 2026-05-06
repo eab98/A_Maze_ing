@@ -152,6 +152,40 @@ class MazeGenerator:
                         neighbor = self.seed.choice(valid_neighbors)
                         self.break_wall(current, neighbor)
 
+    def get_shortest_path(self, maze: list[list[Cell]]) -> Deque[Cell]:
+        start_x, start_y = self.entry
+
+        queue = deque([(maze[start_y][start_x], [maze[start_y][start_x]])])
+
+        visited_coords = {self.entry}
+        while queue:
+            val = queue.popleft()
+            path = val[1]
+            current = val[0]
+            x, y = current.coords
+
+            if current.coords == self.exit:
+                return deque(path[1:-1])
+
+            if current.north == 0 and y > 0 and (x, y - 1) not in visited_coords:
+                visited_coords.add((x, y - 1))
+                queue.append((maze[y - 1][x], path + [maze[y - 1][x]]))
+
+            if current.south == 0 and y < self.height - 1 and (x, y + 1) not in visited_coords:
+                visited_coords.add((x, y + 1))
+                queue.append((maze[y + 1][x], path + [maze[y + 1][x]]))
+
+            if current.east == 0 and x < self.width - 1 and (x + 1, y) not in visited_coords:
+                visited_coords.add((x + 1, y))
+                queue.append((maze[y][x + 1], path + [maze[y][x + 1]]))
+
+            if current.west == 0 and x > 0 and (x - 1, y) not in visited_coords:
+                visited_coords.add((x - 1, y))
+                queue.append((maze[y][x - 1], path + [maze[y][x - 1]]))
+
+        return deque()
+
+
 
     def generate_maze(self) -> list[list[Cell]]:
         maze = self.generate_starting_maze()
@@ -179,9 +213,10 @@ class MazeGenerator:
                     solution_path.pop()
                 current = visited.pop()
             else:
-                self.create_path(solution_path)
                 if not self.perfect:
                     self.break_random_walls(maze, 0.1)
+                    solution_path = self.get_shortest_path(maze)
+                self.create_path(solution_path)
                 self.generate_output_file(maze)
                 current = None
         return maze

@@ -7,6 +7,7 @@ class MazeRenderer:
     def __init__(self):
         pass
 
+
     def create_maze(self, height, width):
         maze = []
         for y in range(height):
@@ -17,36 +18,22 @@ class MazeRenderer:
         return maze
 
 
-    def shared_north(self, maze, x, y):
-        if y > 0 and maze[y][x - 1].south == 1:
-            return True
-        return False
-
-
-    def shared_west(self, maze,  x, y):
-        if x > 0 and maze[y - 1][x].east == 1:
-            return True
-        return False
-
-
-    def print_maze(self, stdsrc, maze, height, width):
+    def print_maze(self, stdsrc, maze, height, width, start_y, start_x):
         stdsrc.clear()
         curses.start_color() 
-        curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
-        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_RED)
-        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_CYAN)
-        
-        WALL_STYLE = curses.color_pair(1) | curses.A_BOLD
+        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK) 
+        WALL_COLOR = curses.color_pair(1) | curses.A_BOLD
 
         try:
-            stdsrc.attron(WALL_STYLE)
+            stdsrc.attron(WALL_COLOR)
             for y in range(height):
+                stdsrc.move(start_y + (y * 2), start_x)
                 for x in range(width):
                     char = "+--" if maze[y][x].north == 1 else "+  "
                     stdsrc.addstr(char)
                 stdsrc.addstr("+")
-                
-                stdsrc.move(stdsrc.getyx()[0] + 1, 0)
+
+                stdsrc.move(start_y + (y * 2) + 1, start_x)
 
                 for x in range(width):
                     wall_char = "|  " if maze[y][x].west == 1 else "   "
@@ -55,42 +42,37 @@ class MazeRenderer:
                 if maze[y][width-1].east == 1:
                     stdsrc.addstr("|")
 
-                stdsrc.move(stdsrc.getyx()[0] + 1, 0)
+                stdsrc.move(start_y + (height * 2), start_x)
 
             for x in range(width):
                 char = "+--" if maze[height-1][x].south == 1 else "+  "
                 stdsrc.addstr(char)
             stdsrc.addstr("+")
-            stdsrc.attroff(WALL_STYLE)
+            stdsrc.attroff(WALL_COLOR)
             
         except curses.error:
             pass
         stdsrc.refresh()
 
 
-    def color_eande(self, stdsrc, entry_coords, exit_coords, maze_height, maze_width):
-        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_RED)
-        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
+    def color_eande(self, stdsrc, entry_coords, exit_coords, maze_height, maze_width, start_y, start_x):
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
+        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_WHITE)
         
         ex, ey = entry_coords
         xx, xy = exit_coords
 
-        ey = max(0, min(ey, maze_height - 1))
-        ex = max(0, min(ex, maze_width - 1))
-        xy = max(0, min(xy, maze_height - 1))
-        xx = max(0, min(xx, maze_width - 1))
-
         try:
-            stdsrc.attron(curses.color_pair(2))
-            stdsrc.addstr(ey * 2 + 1, ex * 3 + 1, "EN")
-            stdsrc.attroff(curses.color_pair(2))
+            stdsrc.attron(curses.color_pair(2) | curses.A_BOLD)
+            stdsrc.addstr(start_y + (ey * 2) + 1, start_x + (ex * 3) + 1, "A")
+            stdsrc.attroff(curses.color_pair(2) | curses.A_BOLD)
 
-            stdsrc.attron(curses.color_pair(3))
-            stdsrc.addstr(xy * 2 + 1, xx * 3 + 1, "EX")
-            stdsrc.attroff(curses.color_pair(3))
+            stdsrc.attron(curses.color_pair(3) | curses.A_BOLD)
+            stdsrc.addstr(start_y + (xy * 2) + 1, start_x + (xx * 3) + 1, "B")
+            stdsrc.attroff(curses.color_pair(3) | curses.A_BOLD)
+            
         except curses.error:
             pass
-        
         stdsrc.refresh()
 
 
@@ -98,10 +80,10 @@ class MazeRenderer:
         for i in range(duration + 1):
             percent = (i / duration) * 100
             bar = '█' * i + '-' * (duration - i)
-            sys.stdout.write(f'\rRécupération des données : |{bar}| {percent:.0f}%')
+            sys.stdout.write(f'\rData recovery : |{bar}| {percent:.0f}%')
             sys.stdout.flush()
             time.sleep(0.1)
-        print("\nTerminé ! 🎉")
+        print("\n")
 
 
     def scanner_line(self, text, width=20, duration=1):

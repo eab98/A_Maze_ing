@@ -37,7 +37,7 @@ class MazeConfig(BaseModel):
         exit_x, exit_y = self.exit
 
         if not (0 <= entry_x < self.width) or not (0 <= entry_y < self.height):
-            raise ValueError(f"ENTRY coordinates {self.entry} are out of bounds for a {self.w}x{self.height} maze.")
+            raise ValueError(f"ENTRY coordinates {self.entry} are out of bounds for a {self.width}x{self.height} maze.")
 
         if not (0 <= exit_x < self.width) or not (0 <= exit_y < self.height):
             raise ValueError(f"EXIT coordinates {self.exit} are out of bounds for a {self.width}x{self.height} maze.")
@@ -57,20 +57,20 @@ def load_config(filepath: str) -> MazeConfig:
     return MazeConfig(**config_dict)
 
 
-if __name__ == "__main__":
-    try:
-        config = load_config("config.txt")
-        print("Configuration loaded successfully!\n")
-        print(f"Width: {config.width}")
-        print(f"Height: {config.height}")
-        print(f"Entry: {config.entry}")
-        print(f"Exit: {config.exit}")
-        print(f"Output File: {config.output_file}")
-        print(f"Perfect: {config.perfect}")
-        print(f"Seed: {config.seed}")
+# if __name__ == "__main__":
+#     try:
+#         config = load_config("config.txt")
+#         print("Configuration loaded successfully!\n")
+#         print(f"Width: {config.width}")
+#         print(f"Height: {config.height}")
+#         print(f"Entry: {config.entry}")
+#         print(f"Exit: {config.exit}")
+#         print(f"Output File: {config.output_file}")
+#         print(f"Perfect: {config.perfect}")
+#         print(f"Seed: {config.seed}")
 
-    except ValidationError as e:
-        print("Error: Invalid configuration data.\n")
-        print(e)
-    except FileNotFoundError:
-        print("Error: 'config.txt' could not be found.")
+#     except ValidationError as e:
+#         print("Error: Invalid configuration data.\n")
+#         print(e)
+#     except FileNotFoundError:
+#         print("Error: 'config.txt' could not be found.")

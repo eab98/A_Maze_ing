@@ -134,6 +134,25 @@ class MazeGenerator:
         except FileNotFoundError:
             print("Output file creation impossible")
 
+    def break_random_walls(self, maze: list[list[Cell]], probs: float) -> None:
+        for y in range(self.height):
+            for x in range(self.width):
+                if self.seed.random() < probs:
+                    current = maze[y][x]
+                    valid_neighbors = []
+                    if x > 0 and current.west == 1:
+                        valid_neighbors.append(maze[y][x - 1])
+                    if x < self.width - 1 and current.east == 1:
+                        valid_neighbors.append(maze[y][x + 1])
+                    if y > 0 and current.north == 1:
+                        valid_neighbors.append(maze[y - 1][x])
+                    if y < self.height - 1 and current.south == 1:
+                        valid_neighbors.append(maze[y + 1][x])
+                    if valid_neighbors:
+                        neighbor = self.seed.choice(valid_neighbors)
+                        self.break_wall(current, neighbor)
+
+
     def generate_maze(self) -> list[list[Cell]]:
         maze = self.generate_starting_maze()
         start_x, start_y = self.entry
@@ -161,6 +180,8 @@ class MazeGenerator:
                 current = visited.pop()
             else:
                 self.create_path(solution_path)
+                if not self.perfect:
+                    self.break_random_walls(maze, 0.1)
                 self.generate_output_file(maze)
                 current = None
         return maze

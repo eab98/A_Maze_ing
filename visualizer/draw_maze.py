@@ -32,9 +32,9 @@ class MazeRenderer:
     def print_maze(self, stdsrc, maze, height, width):
         stdsrc.clear()
         curses.start_color() 
-        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK) 
-        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_RED)
-        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
+        curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_RED)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_CYAN)
         
         WALL_STYLE = curses.color_pair(1) | curses.A_BOLD
 
@@ -72,8 +72,8 @@ class MazeRenderer:
         curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_RED)
         curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
         
-        ey, ex = entry_coords
-        xy, xx = exit_coords
+        ex, ey = entry_coords
+        xx, xy = exit_coords
 
         ey = max(0, min(ey, maze_height - 1))
         ex = max(0, min(ex, maze_width - 1))

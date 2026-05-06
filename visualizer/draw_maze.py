@@ -64,11 +64,11 @@ class MazeRenderer:
 
         try:
             stdsrc.attron(curses.color_pair(2) | curses.A_BOLD)
-            stdsrc.addstr(start_y + (ey * 2) + 1, start_x + (ex * 3) + 1, "A")
+            stdsrc.addstr(start_y + (ey * 2) + 1, start_x + (ex * 3) + 1, "A*")
             stdsrc.attroff(curses.color_pair(2) | curses.A_BOLD)
 
             stdsrc.attron(curses.color_pair(3) | curses.A_BOLD)
-            stdsrc.addstr(start_y + (xy * 2) + 1, start_x + (xx * 3) + 1, "B")
+            stdsrc.addstr(start_y + (xy * 2) + 1, start_x + (xx * 3) + 1, "B*")
             stdsrc.attroff(curses.color_pair(3) | curses.A_BOLD)
             
         except curses.error:
@@ -107,5 +107,29 @@ class MazeRenderer:
                 time.sleep(0.02) 
         print(f"\n{text} [OK]")
 
-    
+
+    def print_way(self, stdsrc, maze, height, width, start_y, start_x):
+        curses.init_pair(4, curses.COLOR_RED, curses.COLOR_RED)
+        WAY_COLOR = curses.color_pair(4)
+        try:
+            stdsrc.attron(WAY_COLOR)
+            for y in range(height):
+                for x in range(width):
+                    cell = maze[y][x]
+                    if cell.on_path:
+                        pos_y = start_y + (y * 2) + 1
+                        pos_x = start_x + (x * 3) + 1
+                        
+                        stdsrc.addstr(pos_y, pos_x, "  ") 
+
+                        if x < width - 1 and cell.east == 0 and maze[y][x+1].on_path:
+                            stdsrc.addstr(pos_y, pos_x + 2, " ")
+                        
+                        if y < height - 1 and cell.south == 0 and maze[y+1][x].on_path:
+                            stdsrc.addstr(pos_y + 1, pos_x, "  ")
+            stdsrc.attroff(WAY_COLOR)
+        except curses.error:
+            pass
+        stdsrc.refresh()
+
 

@@ -10,41 +10,7 @@ def typewriter(text, delay=0.05):
         time.sleep(delay)
     print() # Retour à la ligne à la fin
     
-# barre de chargement :
 
-import sys
-import time
-
-def loading_animation(duration=20):
-    for i in range(duration + 1):
-        percent = (i / duration) * 100
-        bar = '█' * i + '-' * (duration - i)
-        sys.stdout.write(f'\rRécupération des données : |{bar}| {percent:.0f}%')
-        sys.stdout.flush()
-        time.sleep(0.1)
-    print("\nTerminé ! 🎉")
-    
-import sys
-import time
-
-def scanner_line(text, width=20):
-    for i in range(10): # Nombre d'allers-retours
-        for j in range(width):
-            path = [' '] * width
-            path[j] = "●"
-            display = "".join(path)
-            sys.stdout.write(f'\r{text} [{display}]')
-            sys.stdout.flush()
-            time.sleep(0.05)
-        for j in range(width-1, -1, -1):
-            path = [' '] * width
-            path[j] = "●"
-            display = "".join(path)
-            sys.stdout.write(f'\r{text} [{display}]')
-            sys.stdout.flush()
-            time.sleep(0.05)
-    print(f"\n{text} [OK]")
-    
 # cadre pour ecrire :
 
 import curses

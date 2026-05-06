@@ -125,38 +125,5 @@ class MazeRenderer:
                 time.sleep(0.02) 
         print(f"\n{text} [OK]")
 
-    def render_centered_maze(self, stdscr, maze, height, width):
-        # 1. Get terminal dimensions
-        screen_h, screen_w = stdscr.getmaxyx()
-
-        # 2. Calculate maze dimensions in characters
-        # Each cell is 2 lines high and 3 chars wide (+ the final borders)
-        maze_render_h = height * 2 + 1
-        maze_render_w = width * 3 + 1
-
-        # 3. Calculate start positions to center it
-        start_y = (screen_h - maze_render_h) // 2
-        start_x = (screen_w - maze_render_w) // 2
-
-        # 4. Create the maze window
-        # Params: (height, width, start_y, start_x)
-        if screen_h > maze_render_h and screen_w > maze_render_w:
-            maze_win = curses.newwin(maze_render_h, maze_render_w, start_y, start_x)
-            # Draw the maze inside this window
-            self.print_maze(maze_win, maze, height, width)
-            return maze_win
-        else:
-            stdscr.addstr(0, 0, "Terminal too small to center maze!")
-            stdscr.refresh()
-            return None
-
-    def create_info_window(self, stdscr):
-        screen_h, screen_w = stdscr.getmaxyx()
-        # Create a window at the bottom of the screen
-        info_win = curses.newwin(3, screen_w, screen_h - 3, 0)
-        info_win.box() # Draws a border around the interaction window
-        info_win.addstr(1, 2, "Use WASD to move | Press 'Q' to Quit")
-        info_win.refresh()
-        return info_win
     
 

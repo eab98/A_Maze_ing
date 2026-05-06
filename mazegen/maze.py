@@ -27,6 +27,14 @@ class MazeGenerator:
         self.exit = exit
         self.perfect = perfect
         self.seed = random.Random(seed)
+        self.path = []
+
+    def empty_path(self) -> None:
+        self.path = []
+
+    def create_path(self, solution: list[Cell]) -> list[str]:
+        self.empty_path()
+        pass
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """
@@ -74,9 +82,12 @@ class MazeGenerator:
 
     def generate_maze(self) -> list[list[Cell]]:
        maze = self.generate_starting_maze()
-       current = maze[0][0]
+       start_x, start_y = self.entry
+       current = maze[start_y][start_x]
        current.visit()
        visited = deque()
+       solution_path = deque()
+       path_found: bool = False
        while current is not None:
            neighbour = self.get_neighbour(current, maze)
            if neighbour is not None:
@@ -84,7 +95,15 @@ class MazeGenerator:
                neighbour.visit()
                visited.append(current)
                current = neighbour
+               if current.coords == self.exit:
+                   path_found = True
+               if not path_found:
+                   solution_path.append(current)
            elif len(visited) > 0:
+               if current.coords == self.exit:
+                   path_found = True
+               if not path_found:
+                   solution_path.pop()
                current = visited.pop()
            else:
                break

@@ -31,26 +31,33 @@ class MazeRenderer:
 
     def print_maze(self, stdsrc, maze, height, width):
         stdsrc.clear()
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_RED)
+        WALL_COLOR = curses.color_pair(1)
         try:
             for y in range(height):
                 for x in range(width):
-                    stdsrc.addstr("+--" if maze[y][x].north == 1 else "+  ")
-                stdsrc.addstr("+")
+                    char = "+--" if maze[y][x].north == 1 else "+  "
+                    stdsrc.addstr(char, WALL_COLOR)
+                                    
+                stdsrc.addstr("+", WALL_COLOR)
                 curr_y, _ = stdsrc.getyx()
                 stdsrc.move(curr_y + 1, 0)
 
                 for x in range(width):
-                    stdsrc.addstr("|  " if maze[y][x].west == 1 else "   ")
+                    wall_char = "|  " if maze[y][x].west == 1 else "   "
+                    stdsrc.addstr(wall_char, WALL_COLOR)
                     
                 if maze[y][width-1].east == 1:
-                    stdsrc.addstr("|")
+                    stdsrc.addstr("|", WALL_COLOR)
 
                 curr_y, _ = stdsrc.getyx()
                 stdsrc.move(curr_y + 1, 0)
 
             for x in range(width):
-                stdsrc.addstr("+--" if maze[height-1][x].south == 1 else "+  ")
-            stdsrc.addstr("+")
+                char = "+--" if maze[height-1][x].south == 1 else "+  "
+                stdsrc.addstr(char, WALL_COLOR)
+            stdsrc.addstr("+", WALL_COLOR)
+            
         except curses.error:
             pass
         stdsrc.refresh()
@@ -95,7 +102,7 @@ class MazeRenderer:
         exit_y, exit_x = exit_coords
         try:
             stdsrc.attron(curses.color_pair(1))
-            stdsrc.addstr(entry_y * 2 + 1, entry_x * 3 + 1, "EN")
+            stdsrc.addstr(entry_y, entry_x * 3 + 1, "EN")
             stdsrc.attroff(curses.color_pair(1))
 
             stdsrc.attron(curses.color_pair(2))

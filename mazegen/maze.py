@@ -34,6 +34,7 @@ class MazeGenerator:
 
     def create_path(self, solution: list[Cell]) -> list[str]:
         self.empty_path()
+        pass
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """

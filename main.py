@@ -1,5 +1,5 @@
 from mazegen import MazeGenerator
-from visualizer.draw_maze import MazeRenderer
+from visualizer import MazeRenderer
 import curses
 from parsing import load_config
 

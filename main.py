@@ -8,7 +8,7 @@ import curses
 
 def main(stdscr):
     curses.curs_set(0)
-    
+
     config = load_config("config.txt")
     mazeGen = MazeGenerator(
         config.height,
@@ -42,15 +42,15 @@ def main(stdscr):
             try:
                 renderer.print_maze(stdscr, maze, config.height, config.width)
                 renderer.color_eande(
-                    stdscr, 
-                    mazeGen.entry, 
-                    mazeGen.exit, 
-                    mazeGen.height, 
+                    stdscr,
+                    mazeGen.entry,
+                    mazeGen.exit,
+                    mazeGen.height,
                     mazeGen.width
                 )
             except curses.error:
                 pass
-        
+
         stdscr.refresh()
 
     draw_scene()
@@ -59,7 +59,7 @@ def main(stdscr):
         key = stdscr.getch()
         if key == curses.KEY_RESIZE:
             draw_scene()
-            
+
         elif key == ord('q'):
             break
 

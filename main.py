@@ -1,6 +1,6 @@
 from mazegen import MazeGenerator
+from visualizer import MazeRenderer
 import curses
-from visualizer import print_maze, loading_animation, scanner_line
 from parsing import load_config
 
 
@@ -13,9 +13,17 @@ def main(stdsrc):
                             config.perfect,
                             config.seed)
     maze = mazeGen.generate_maze()
-    scanner_line("AMAZING")
-    loading_animation()
-    print_maze(stdsrc, maze, config.height, config.width)
+    renderer = MazeRenderer()
+    renderer.scanner_line("AMAZING")
+    renderer.loading_animation()
+    renderer.print_maze(stdsrc, maze, config.height, config.width)
+    renderer.color_eande(
+        stdsrc, 
+        mazeGen.entry, 
+        mazeGen.exit, 
+        mazeGen.height, 
+        mazeGen.width
+    )
     stdsrc.getch()
 
 if __name__ == "__main__":

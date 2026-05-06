@@ -13,4 +13,8 @@ Code réutilisable : comment importer MazeGenerator, exemple d'usage, accès à 
 Gestion d'équipe : rôles, planning prévu vs réel, ce qui a bien marché / à améliorer, outils
 utilisés
 
-Resources : https://docs.python.org/3/howto/curses.html // https://realpython.com/ref/stdlib/curses/
+Resources : VISUAL : https://docs.python.org/3/howto/curses.html // https://realpython.com/ref/stdlib/curses/ 
+			ALGO : https://medium.com/@nacerkroudir/randomized-depth-first-search-algorithm-for-maze-generation-fb2d83702742
+					https://dqwertyc.github.io/unity-maze-generator/
+					https://www.w3schools.com/python/
+					https://docs.python.org/3.12

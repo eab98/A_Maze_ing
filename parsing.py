@@ -37,7 +37,7 @@ class MazeConfig(BaseModel):
         exit_x, exit_y = self.exit
 
         if not (0 <= entry_x < self.width) or not (0 <= entry_y < self.height):
-            raise ValueError(f"ENTRY coordinates {self.entry} are out of bounds for a {self.w}x{self.height} maze.")
+            raise ValueError(f"ENTRY coordinates {self.entry} are out of bounds for a {self.width}x{self.height} maze.")
 
         if not (0 <= exit_x < self.width) or not (0 <= exit_y < self.height):
             raise ValueError(f"EXIT coordinates {self.exit} are out of bounds for a {self.width}x{self.height} maze.")
@@ -69,7 +69,7 @@ if __name__ == "__main__":
         print(f"Perfect: {config.perfect}")
         print(f"Seed: {config.seed}")
 
-    except ValidationError as e:
+    except (ValidationError, ValueError) as e:
         print("Error: Invalid configuration data.\n")
         print(e)
     except FileNotFoundError:

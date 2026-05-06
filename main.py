@@ -15,6 +15,7 @@ def main(stdscr):
         config.width,
         config.entry,
         config.exit,
+        config.output_file,
         config.perfect,
         config.seed
     )
@@ -54,6 +55,10 @@ def main(stdscr):
         stdscr.refresh()
 
     draw_scene()
+
+    print()
+    print()
+    print(mazeGen.path)
 
     while True:
         key = stdscr.getch()

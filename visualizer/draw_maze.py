@@ -11,8 +11,8 @@ class MazeRenderer:
         maze = []
         for y in range(height):
             line = []
-        for x in range(width):
-            line.append(Cell(x, y)) 
+            for x in range(width):
+                line.append(Cell(x, y)) 
             maze.append(line)
         return maze
 
@@ -31,35 +31,66 @@ class MazeRenderer:
 
     def print_maze(self, stdsrc, maze, height, width):
         stdsrc.clear()
-        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_RED)
-        WALL_COLOR = curses.color_pair(1)
+        curses.start_color() 
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK) 
+        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_RED)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
+        
+        WALL_STYLE = curses.color_pair(1) | curses.A_BOLD
+
         try:
+            stdsrc.attron(WALL_STYLE)
             for y in range(height):
                 for x in range(width):
                     char = "+--" if maze[y][x].north == 1 else "+  "
-                    stdsrc.addstr(char, WALL_COLOR)
-                                    
-                stdsrc.addstr("+", WALL_COLOR)
-                curr_y, _ = stdsrc.getyx()
-                stdsrc.move(curr_y + 1, 0)
+                    stdsrc.addstr(char)
+                stdsrc.addstr("+")
+                
+                stdsrc.move(stdsrc.getyx()[0] + 1, 0)
 
                 for x in range(width):
                     wall_char = "|  " if maze[y][x].west == 1 else "   "
-                    stdsrc.addstr(wall_char, WALL_COLOR)
-                    
+                    stdsrc.addstr(wall_char)
+                
                 if maze[y][width-1].east == 1:
-                    stdsrc.addstr("|", WALL_COLOR)
+                    stdsrc.addstr("|")
 
-                curr_y, _ = stdsrc.getyx()
-                stdsrc.move(curr_y + 1, 0)
+                stdsrc.move(stdsrc.getyx()[0] + 1, 0)
 
             for x in range(width):
                 char = "+--" if maze[height-1][x].south == 1 else "+  "
-                stdsrc.addstr(char, WALL_COLOR)
-            stdsrc.addstr("+", WALL_COLOR)
+                stdsrc.addstr(char)
+            stdsrc.addstr("+")
+            stdsrc.attroff(WALL_STYLE)
             
         except curses.error:
             pass
+        stdsrc.refresh()
+
+
+    def color_eande(self, stdsrc, entry_coords, exit_coords, maze_height, maze_width):
+        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_RED)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
+        
+        ey, ex = entry_coords
+        xy, xx = exit_coords
+
+        ey = max(0, min(ey, maze_height - 1))
+        ex = max(0, min(ex, maze_width - 1))
+        xy = max(0, min(xy, maze_height - 1))
+        xx = max(0, min(xx, maze_width - 1))
+
+        try:
+            stdsrc.attron(curses.color_pair(2))
+            stdsrc.addstr(ey * 2 + 1, ex * 3 + 1, "EN")
+            stdsrc.attroff(curses.color_pair(2))
+
+            stdsrc.attron(curses.color_pair(3))
+            stdsrc.addstr(xy * 2 + 1, xx * 3 + 1, "EX")
+            stdsrc.attroff(curses.color_pair(3))
+        except curses.error:
+            pass
+        
         stdsrc.refresh()
 
 
@@ -93,22 +124,39 @@ class MazeRenderer:
                 sys.stdout.flush()
                 time.sleep(0.02) 
         print(f"\n{text} [OK]")
-    
-	
-    def color_eande(self, stdsrc, entry_coords, exit_coords, maze_height, maze_width):
-        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_RED)
-        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_GREEN)
-        entry_y, entry_x = entry_coords
-        exit_y, exit_x = exit_coords
-        try:
-            stdsrc.attron(curses.color_pair(1))
-            stdsrc.addstr(entry_y, entry_x * 3 + 1, "EN")
-            stdsrc.attroff(curses.color_pair(1))
 
-            stdsrc.attron(curses.color_pair(2))
-            stdsrc.addstr(exit_y * 2 + 1, exit_x * 3 + 1, "EX")
-            stdsrc.attroff(curses.color_pair(2))
-        except curses.error:
-            pass
-        stdsrc.refresh()
+    def render_centered_maze(self, stdscr, maze, height, width):
+        # 1. Get terminal dimensions
+        screen_h, screen_w = stdscr.getmaxyx()
+
+        # 2. Calculate maze dimensions in characters
+        # Each cell is 2 lines high and 3 chars wide (+ the final borders)
+        maze_render_h = height * 2 + 1
+        maze_render_w = width * 3 + 1
+
+        # 3. Calculate start positions to center it
+        start_y = (screen_h - maze_render_h) // 2
+        start_x = (screen_w - maze_render_w) // 2
+
+        # 4. Create the maze window
+        # Params: (height, width, start_y, start_x)
+        if screen_h > maze_render_h and screen_w > maze_render_w:
+            maze_win = curses.newwin(maze_render_h, maze_render_w, start_y, start_x)
+            # Draw the maze inside this window
+            self.print_maze(maze_win, maze, height, width)
+            return maze_win
+        else:
+            stdscr.addstr(0, 0, "Terminal too small to center maze!")
+            stdscr.refresh()
+            return None
+
+    def create_info_window(self, stdscr):
+        screen_h, screen_w = stdscr.getmaxyx()
+        # Create a window at the bottom of the screen
+        info_win = curses.newwin(3, screen_w, screen_h - 3, 0)
+        info_win.box() # Draws a border around the interaction window
+        info_win.addstr(1, 2, "Use WASD to move | Press 'Q' to Quit")
+        info_win.refresh()
+        return info_win
+    
 

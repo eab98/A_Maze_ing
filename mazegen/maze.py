@@ -1,4 +1,5 @@
 from collections import deque
+from typing import Deque
 import random
 
 class Cell:
@@ -32,9 +33,29 @@ class MazeGenerator:
     def empty_path(self) -> None:
         self.path = []
 
-    def create_path(self, solution: list[Cell]) -> list[str]:
+    def get_direction(self, current: tuple[int, int], next: tuple[int, int]) -> str:
+        current_x, current_y = current
+        next_x, next_y = next
+        if current_x < next_x:
+            return 'E'
+        elif current_x > next_x:
+            return 'W'
+        elif current_y < next_y:
+            return 'S'
+        else:
+            return 'N'
+
+    def create_path(self, solution: Deque[Cell]) -> None:
         self.empty_path()
-        pass
+        if solution:
+            previous = solution.popleft()
+            self.path.append(self.get_direction(self.entry, previous.coords))
+            while solution:
+                current = solution.popleft()
+                self.path.append(self.get_direction(previous.coords, current.coords))
+                previous = current
+            self.path.append(self.get_direction(previous.coords, self.exit))
+
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """
@@ -106,5 +127,6 @@ class MazeGenerator:
                    solution_path.pop()
                current = visited.pop()
            else:
-               break
+               self.create_path(solution_path)
+               current = None
        return maze

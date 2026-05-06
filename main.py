@@ -24,6 +24,7 @@ def main(stdsrc):
         mazeGen.height, 
         mazeGen.width
     )
+    print(mazeGen.path)
     stdsrc.getch()
 
 if __name__ == "__main__":

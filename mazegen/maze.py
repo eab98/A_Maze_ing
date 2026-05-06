@@ -10,6 +10,7 @@ class Cell:
         self.west = 1
         self.coords = (x, y)
         self.visited = False
+        self.on_path = False
 
     def is_visited(self) -> bool:
         return self.visited
@@ -49,9 +50,11 @@ class MazeGenerator:
         self.empty_path()
         if solution:
             previous = solution.popleft()
+            previous.on_path = True
             self.path.append(self.get_direction(self.entry, previous.coords))
             while solution:
                 current = solution.popleft()
+                current.on_path = True
                 self.path.append(self.get_direction(previous.coords, current.coords))
                 previous = current
             self.path.append(self.get_direction(previous.coords, self.exit))

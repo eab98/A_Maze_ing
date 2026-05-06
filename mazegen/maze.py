@@ -19,15 +19,20 @@ class Cell:
     def visit(self) -> None:
         self.visited = True
 
+    def get_value(self) -> int:
+        return (2**3) * self.west + (2**2) * self.south + 2 * self.east + self.north
+
 
 class MazeGenerator:
     def __init__(self, height: int, width: int, entry: tuple[int, int],
-                 exit: tuple[int, int], perfect: bool,
+                 exit: tuple[int, int], output_file: str,
+                 perfect: bool,
                  seed: int | None) -> None:
         self.height = height
         self.width = width
         self.entry = entry
         self.exit = exit
+        self.output_file = output_file
         self.perfect = perfect
         self.seed = random.Random(seed)
         self.path = []
@@ -108,6 +113,27 @@ class MazeGenerator:
             current.north = 0
             neighbour.south = 0
 
+    def generate_output_file(self, maze: list[list[Cell]]) -> None:
+        try:
+            with open(self.output_file, 'w') as f:
+                for line in maze:
+                    for cell in line:
+                        value = cell.get_value()
+                        value_str = f"{value:X}"
+                        f.write(value_str)
+                    f.write('\n')
+                f.write('\n')
+                entry_x, entry_y = self.entry
+                exit_x, exit_y = self.exit
+                f.write(str(entry_x) + ',' + str(entry_y) + '\n')
+                f.write(str(exit_x) + ',' + str(exit_y) + '\n')
+                for i in self.path:
+                    f.write(str(i))
+                f.write('\n')
+
+        except FileNotFoundError:
+            print("Output file creation impossible")
+
     def generate_maze(self) -> list[list[Cell]]:
         maze = self.generate_starting_maze()
         start_x, start_y = self.entry
@@ -135,5 +161,6 @@ class MazeGenerator:
                 current = visited.pop()
             else:
                 self.create_path(solution_path)
+                self.generate_output_file(maze)
                 current = None
         return maze

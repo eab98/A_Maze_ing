@@ -14,6 +14,7 @@ def main(stdscr):
         config.width,
         config.entry,
         config.exit,
+        config.output_file,
         config.perfect,
         config.seed
     )

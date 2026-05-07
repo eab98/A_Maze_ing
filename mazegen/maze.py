@@ -229,6 +229,7 @@ class MazeGenerator:
             print(e)
         start_x, start_y = self.entry
         current = maze[start_y][start_x]
+        current.on_path = True
         current.visit()
         visited = deque()
         solution_path = deque()
@@ -242,11 +243,13 @@ class MazeGenerator:
                 current = neighbour
                 if current.coords == self.exit:
                     path_found = True
+                    current.on_path = True
                 if not path_found:
                     solution_path.append(current)
             elif len(visited) > 0:
                 if current.coords == self.exit:
                     path_found = True
+                    current.on_path = True
                 if not path_found:
                     solution_path.pop()
                 current = visited.pop()

@@ -5,10 +5,10 @@ import sys
 
 
 class MazeRenderer:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def create_maze(self, height, width):
+    def create_maze(self, height: int, width: int) -> list[list[Cell]]:
         maze = []
         for y in range(height):
             line = []
@@ -17,7 +17,8 @@ class MazeRenderer:
             maze.append(line)
         return maze
 
-    def print_maze(self, stdsrc, maze, height, width, start_y, start_x):
+    def print_maze(self, stdsrc, maze, height, width, start_y,
+                   start_x) -> None:
         stdsrc.clear()
         curses.start_color()
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
@@ -53,7 +54,7 @@ class MazeRenderer:
             pass
         stdsrc.refresh()
 
-    def loading_animation(self, duration=20):
+    def loading_animation(self, duration: int = 20) -> None:
         for i in range(duration + 1):
             percent = (i / duration) * 100
             bar = '█' * i + '-' * (duration - i)
@@ -62,11 +63,12 @@ class MazeRenderer:
             time.sleep(0.1)
         print("\n")
 
-    def scanner_line(self, text, width=20, duration=1):
+    def scanner_line(self, text, width: int = 20, duration: int = 1) -> None:
         start_time = time.time()
         while time.time() - start_time < duration:
             for j in range(width):
-                if time.time() - start_time >= duration: break
+                if time.time() - start_time >= duration:
+                    break
                 path = [' '] * width
                 path[j] = "●"
                 display = "".join(path)
@@ -74,7 +76,8 @@ class MazeRenderer:
                 sys.stdout.flush()
                 time.sleep(0.02)
             for j in range(width-1, -1, -1):
-                if time.time() - start_time >= duration: break
+                if time.time() - start_time >= duration:
+                    break
                 path = [' '] * width
                 path[j] = "●"
                 display = "".join(path)
@@ -83,7 +86,8 @@ class MazeRenderer:
                 time.sleep(0.02)
         print(f"\n{text} [OK]")
 
-    def print_way(self, stdsrc, maze, path, height, width, start_y, start_x, entry, exit):
+    def print_way(self, stdsrc, maze, path, height, width, start_y,
+                  start_x, entry, exit) -> None:
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(4, curses.COLOR_RED, curses.COLOR_RED)
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_WHITE)
@@ -107,14 +111,16 @@ class MazeRenderer:
                 if (x, y) == entry:
                     ex, ey = entry
                     stdsrc.attron(curses.color_pair(2) | curses.A_BOLD)
-                    stdsrc.addstr(start_y + (ey * 2) + 1, start_x + (ex * 3) + 1, "A*")
+                    stdsrc.addstr(start_y + (ey * 2) + 1,
+                                  start_x + (ex * 3) + 1, "A*")
                     stdsrc.attroff(curses.color_pair(2) | curses.A_BOLD)
                     stdsrc.attron(WAY_COLOR)
 
                 if (x, y) == exit:
                     xx, xy = exit
                     stdsrc.attron(curses.color_pair(3) | curses.A_BOLD)
-                    stdsrc.addstr(start_y + (xy * 2) + 1, start_x + (xx * 3) + 1, "B*")
+                    stdsrc.addstr(start_y + (xy * 2) + 1,
+                                  start_x + (xx * 3) + 1, "B*")
                     stdsrc.attroff(curses.color_pair(3) | curses.A_BOLD)
             stdsrc.attroff(WAY_COLOR)
         except curses.error:
@@ -133,12 +139,14 @@ class MazeRenderer:
                         pos_y = start_y + (y * 2) + 1
                         pos_x = start_x + (x * 3) + 1
 
-                        stdsrc.addstr(pos_y, pos_x, "  ") 
+                        stdsrc.addstr(pos_y, pos_x, "  ")
 
-                        if x < width - 1 and cell.east == 0 and maze[y][x+1].forty_two:
+                        if (x < width - 1 and cell.east == 0
+                                and maze[y][x+1].forty_two):
                             stdsrc.addstr(pos_y, pos_x + 2, " ")
 
-                        if y < height - 1 and cell.south == 0 and maze[y+1][x].forty_two:
+                        if (y < height - 1 and cell.south == 0
+                                and maze[y+1][x].forty_two):
                             stdsrc.addstr(pos_y + 1, pos_x, "  ")
             stdsrc.attroff(WAY_COLOR)
         except curses.error:

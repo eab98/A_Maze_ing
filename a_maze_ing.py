@@ -34,7 +34,7 @@ def main(stdscr):
         cmd_win.box()
 
         cmd_win.addstr(1, 2, "Generate a new maze : Press (R)")
-        cmd_win.addstr(2, 2, "Display/Hide the solver : Press (P)")
+        cmd_win.addstr(2, 2, "Display/Hide the path : Press (P)")
         cmd_win.addstr(3, 2, "Change wall colors : Press (C)")
         cmd_win.addstr(4, 2, "Exit : Press (Q)")
 

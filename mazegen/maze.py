@@ -12,6 +12,7 @@ class Cell:
         self.coords = (x, y)
         self.visited = False
         self.on_path = False
+        self.forty_two = False
 
     def is_visited(self) -> bool:
         return self.visited
@@ -84,13 +85,13 @@ class MazeGenerator:
                       maze: list[list[Cell]]) -> Cell | None:
         neighbours = []
         cell_x, cell_y = cell.coords
-        if cell_x < self.width - 1 and not maze[cell_y][cell_x + 1].visited:
+        if cell_x < self.width - 1 and not (maze[cell_y][cell_x + 1].visited or maze[cell_y][cell_x + 1].forty_two):
             neighbours.append(maze[cell_y][cell_x + 1])
-        if cell_y < self.height - 1 and not maze[cell_y + 1][cell_x].visited:
+        if cell_y < self.height - 1 and not (maze[cell_y + 1][cell_x].visited or maze[cell_y + 1][cell_x].forty_two):
             neighbours.append(maze[cell_y + 1][cell_x])
-        if cell_x > 0 and not maze[cell_y][cell_x - 1].visited:
+        if cell_x > 0 and not (maze[cell_y][cell_x - 1].visited or maze[cell_y][cell_x - 1].forty_two):
             neighbours.append(maze[cell_y][cell_x - 1])
-        if cell_y > 0 and not maze[cell_y - 1][cell_x].visited:
+        if cell_y > 0 and not (maze[cell_y - 1][cell_x].visited or maze[cell_y - 1][cell_x].forty_two):
             neighbours.append(maze[cell_y - 1][cell_x])
         if len(neighbours) > 0:
             return self.seed.choice(neighbours)
@@ -112,6 +113,39 @@ class MazeGenerator:
         elif current_y > neighbour_y:
             current.north = 0
             neighbour.south = 0
+
+    def set_four(self, maze: list[list[Cell]], cx: int, cy: int) -> None:
+        maze[cy][cx - 1].forty_two = True
+        maze[cy][cx - 2].forty_two = True
+        maze[cy][cx - 3].forty_two = True
+        maze[cy + 1][cx - 1].forty_two = True
+        maze[cy + 2][cx - 1].forty_two = True
+        maze[cy - 1][cx - 3].forty_two = True
+        maze[cy - 2][cx - 3].forty_two = True
+
+    def set_two(self, maze: list[list[Cell]], cx: int, cy: int) -> None:
+        maze[cy][cx + 1].forty_two = True
+        maze[cy][cx + 2].forty_two = True
+        maze[cy][cx + 3].forty_two = True
+        maze[cy - 1][cx + 3].forty_two = True
+        maze[cy - 2][cx + 3].forty_two = True
+        maze[cy - 2][cx + 2].forty_two = True
+        maze[cy - 2][cx + 1].forty_two = True
+        maze[cy + 1][cx + 1].forty_two = True
+        maze[cy + 2][cx + 1].forty_two = True
+        maze[cy + 2][cx + 2].forty_two = True
+        maze[cy + 2][cx + 3].forty_two = True
+
+
+
+    def set_forty_two(self, maze: list[list[Cell]]) -> None:
+        if self.height < 8 or self.width < 10:
+            raise ValueError("Maze is too small to display 42")
+        center_x = self.width // 2
+        center_y = self.height // 2
+
+        self.set_four(maze, center_x, center_y)
+        self.set_two(maze, center_x, center_y)
 
     def generate_output_file(self, maze: list[list[Cell]]) -> None:
         try:
@@ -189,6 +223,10 @@ class MazeGenerator:
 
     def generate_maze(self) -> list[list[Cell]]:
         maze = self.generate_starting_maze()
+        try:
+            self.set_forty_two(maze)
+        except ValueError as e:
+            print(e)
         start_x, start_y = self.entry
         current = maze[start_y][start_x]
         current.visit()

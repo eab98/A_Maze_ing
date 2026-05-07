@@ -54,17 +54,11 @@ class MazeRenderer:
         stdsrc.refresh()
 
     def color_eande(self, stdsrc, entry_coords, exit_coords, maze_height, maze_width, start_y, start_x):
-        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_WHITE)
 
-        ex, ey = entry_coords
         xx, xy = exit_coords
 
         try:
-            stdsrc.attron(curses.color_pair(2) | curses.A_BOLD)
-            stdsrc.addstr(start_y + (ey * 2) + 1, start_x + (ex * 3) + 1, "A*")
-            stdsrc.attroff(curses.color_pair(2) | curses.A_BOLD)
-
             stdsrc.attron(curses.color_pair(3) | curses.A_BOLD)
             stdsrc.addstr(start_y + (xy * 2) + 1, start_x + (xx * 3) + 1, "B*")
             stdsrc.attroff(curses.color_pair(3) | curses.A_BOLD)
@@ -100,31 +94,35 @@ class MazeRenderer:
                 display = "".join(path)
                 sys.stdout.write(f'\r{text} [{display}]')
                 sys.stdout.flush()
-                time.sleep(0.02) 
+                time.sleep(0.02)
         print(f"\n{text} [OK]")
 
-    def print_way(self, stdsrc, maze, height, width, start_y, start_x):
+    def print_way(self, stdsrc, maze, path, height, width, start_y, start_x, entry):
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(4, curses.COLOR_RED, curses.COLOR_RED)
         WAY_COLOR = curses.color_pair(4)
         try:
             stdsrc.attron(WAY_COLOR)
-            for y in range(height):
-                for x in range(width):
-                    cell = maze[y][x]
-                    time.sleep(0.02)
-                    if cell.on_path:
-                        pos_y = start_y + (y * 2) + 1
-                        pos_x = start_x + (x * 3) + 1
+            for cell in path:
+                x, y = cell.coords
+                pos_y = start_y + (y * 2) + 1
+                pos_x = start_x + (x * 3) + 1
 
-                        stdsrc.addstr(pos_y, pos_x, "  ") 
+                stdsrc.addstr(pos_y, pos_x, "  ")
 
-                        if x < width - 1 and cell.east == 0 and maze[y][x+1].on_path:
-                            stdsrc.addstr(pos_y, pos_x + 2, " ")
+                if x < width - 1 and cell.east == 0 and maze[y][x+1].on_path:
+                    stdsrc.addstr(pos_y, pos_x + 2, " ")
 
-                        if y < height - 1 and cell.south == 0 and maze[y+1][x].on_path:
-                            stdsrc.addstr(pos_y + 1, pos_x, "  ")
-                # time.sleep(0.05)
-            stdsrc.refresh()
+                if y < height - 1 and cell.south == 0 and maze[y+1][x].on_path:
+                    stdsrc.addstr(pos_y + 1, pos_x, "  ")
+                stdsrc.refresh()
+                time.sleep(0.05)
+                if (x, y) == entry:
+                    ex, ey = entry
+                    stdsrc.attron(curses.color_pair(2) | curses.A_BOLD)
+                    stdsrc.addstr(start_y + (ey * 2) + 1, start_x + (ex * 3) + 1, "A*")
+                    stdsrc.attroff(curses.color_pair(2) | curses.A_BOLD)
+                    stdsrc.attron(WAY_COLOR)
             stdsrc.attroff(WAY_COLOR)
         except curses.error:
             pass

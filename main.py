@@ -44,6 +44,7 @@ def main(stdscr):
             start_x = (current_w - req_w) // 2
             try:
                 renderer.print_maze(stdscr, maze, config.height, config.width, start_y, start_x)
+                renderer.print_forty_two(stdscr, maze, config.height, config.width, start_y, start_x)
                 renderer.print_way(stdscr, maze, config.height, config.width, start_y, start_x)
                 renderer.color_eande(
                     stdscr,

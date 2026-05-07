@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, model_validator, field_validator
-from pydantic import ValidationError
 
 
 class MazeConfig(BaseModel):
@@ -10,7 +9,6 @@ class MazeConfig(BaseModel):
     output_file: str = Field(..., min_length=1)
     perfect: bool = Field(...)
     seed: int | None = Field(default=None)
-
 
     @field_validator('entry', 'exit', mode='before')
     @classmethod
@@ -29,7 +27,8 @@ class MazeConfig(BaseModel):
         elif val_lower == 'false':
             return False
         else:
-            raise ValueError("PERFECT must be 'true' or 'false' (case-insensitive)")
+            msg = "PERFECT must be 'true' or 'false' (case-insensitive)"
+            raise ValueError(msg)
 
     @model_validator(mode='after')
     def check_coordinates(self) -> 'MazeConfig':
@@ -37,10 +36,14 @@ class MazeConfig(BaseModel):
         exit_x, exit_y = self.exit
 
         if not (0 <= entry_x < self.width) or not (0 <= entry_y < self.height):
-            raise ValueError(f"ENTRY coordinates {self.entry} are out of bounds for a {self.width}x{self.height} maze.")
+            msg = (f"ENTRY coordinates {self.entry} are out of " +
+                   "bounds for a {self.width}x{self.height} maze.")
+            raise ValueError(msg)
 
         if not (0 <= exit_x < self.width) or not (0 <= exit_y < self.height):
-            raise ValueError(f"EXIT coordinates {self.exit} are out of bounds for a {self.width}x{self.height} maze.")
+            msg = (f"EXIT coordinates {self.exit} are out of bounds for a " +
+                   "{self.width}x{self.height} maze.")
+            raise ValueError(msg)
 
         return self
 
@@ -55,7 +58,6 @@ def load_config(filepath: str) -> MazeConfig:
                 key, val = line.split('=', 1)
                 config_dict[key.strip().lower()] = val.strip()
     return MazeConfig(**config_dict)
-
 
 # if __name__ == "__main__":
 #     try:

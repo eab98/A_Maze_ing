@@ -3,6 +3,10 @@ from typing import Deque
 import random
 
 
+class EntryExitFortyTwoError(Exception):
+    pass
+
+
 class Cell:
     def __init__(self, x: int, y: int):
         self.north = 1
@@ -21,7 +25,8 @@ class Cell:
         self.visited = True
 
     def get_value(self) -> int:
-        return (2**3) * self.west + (2**2) * self.south + 2 * self.east + self.north
+        return ((2**3) * self.west + (2**2) * self.south + 2 * self.east
+                + self.north)
 
 
 class MazeGenerator:
@@ -36,8 +41,8 @@ class MazeGenerator:
         self.output_file = output_file
         self.perfect = perfect
         self.seed = random.Random(seed)
-        self.path = []
-        self.path_visu = []
+        self.path: list[str] = []
+        self.path_visu: list[Cell] = []
 
     def empty_path(self) -> None:
         self.path = []
@@ -56,14 +61,16 @@ class MazeGenerator:
         else:
             return 'N'
 
-    def create_path(self, entry_cell: Cell, exit_cell: Cell, solution: Deque[Cell]) -> None:
+    def create_path(self, entry_cell: Cell, exit_cell: Cell,
+                    solution: Deque[Cell]) -> None:
         self.empty_path()
         if solution:
             previous = solution.popleft()
             previous.on_path = True
             if self.perfect:
                 self.path_visu.append(entry_cell)
-                self.path.append(self.get_direction(self.entry, previous.coords))
+                self.path.append(self.get_direction(self.entry,
+                                                    previous.coords))
             self.path_visu.append(previous)
             while solution:
                 current = solution.popleft()
@@ -82,7 +89,7 @@ class MazeGenerator:
         :return: A list of lists representing the starting maze where each
         list represents a line
         """
-        maze = []
+        maze: list[list[Cell]] = []
         for y in range(self.height):
             maze.append([])
             for x in range(self.width):
@@ -93,13 +100,21 @@ class MazeGenerator:
                       maze: list[list[Cell]]) -> Cell | None:
         neighbours = []
         cell_x, cell_y = cell.coords
-        if cell_x < self.width - 1 and not (maze[cell_y][cell_x + 1].visited or maze[cell_y][cell_x + 1].forty_two):
+        if (cell_x < self.width - 1
+                and not (maze[cell_y][cell_x + 1].visited
+                         or maze[cell_y][cell_x + 1].forty_two)):
             neighbours.append(maze[cell_y][cell_x + 1])
-        if cell_y < self.height - 1 and not (maze[cell_y + 1][cell_x].visited or maze[cell_y + 1][cell_x].forty_two):
+        if (cell_y < self.height - 1
+                and not (maze[cell_y + 1][cell_x].visited
+                         or maze[cell_y + 1][cell_x].forty_two)):
             neighbours.append(maze[cell_y + 1][cell_x])
-        if cell_x > 0 and not (maze[cell_y][cell_x - 1].visited or maze[cell_y][cell_x - 1].forty_two):
+        if (cell_x > 0
+                and not (maze[cell_y][cell_x - 1].visited
+                         or maze[cell_y][cell_x - 1].forty_two)):
             neighbours.append(maze[cell_y][cell_x - 1])
-        if cell_y > 0 and not (maze[cell_y - 1][cell_x].visited or maze[cell_y - 1][cell_x].forty_two):
+        if (cell_y > 0
+                and not (maze[cell_y - 1][cell_x].visited
+                         or maze[cell_y - 1][cell_x].forty_two)):
             neighbours.append(maze[cell_y - 1][cell_x])
         if len(neighbours) > 0:
             return self.seed.choice(neighbours)
@@ -167,8 +182,6 @@ class MazeGenerator:
         self.break_wall(maze[cy + 2][cx + 2], maze[cy + 2][cx + 3])
         self.break_wall(maze[cy][cx + 3], maze[cy - 1][cx + 3])
 
-
-
     def set_forty_two(self, maze: list[list[Cell]]) -> None:
         if self.height < 7 or self.width < 9:
             raise ValueError("Maze is too small to display 42")
@@ -177,6 +190,16 @@ class MazeGenerator:
 
         self.set_four(maze, center_x, center_y)
         self.set_two(maze, center_x, center_y)
+        for line in maze:
+            for cell in line:
+                if cell.forty_two and cell.coords == self.entry:
+                    msg = ("Invalid entry value " +
+                           f"{self.entry} clashes with 42 display")
+                    raise EntryExitFortyTwoError(msg)
+                if cell.forty_two and cell.coords == self.exit:
+                    msg = ("Invalid exit value " +
+                           f"{self.exit} clashes with 42 display")
+                    raise EntryExitFortyTwoError(msg)
 
     def generate_output_file(self, maze: list[list[Cell]]) -> None:
         try:
@@ -208,13 +231,15 @@ class MazeGenerator:
                     if x > 0 and current.west == 1 and not current.forty_two:
                         if not maze[y][x - 1].forty_two:
                             valid_neighbors.append(maze[y][x - 1])
-                    if x < self.width - 1 and current.east == 1 and not current.forty_two:
+                    if (x < self.width - 1 and current.east == 1
+                            and not current.forty_two):
                         if not maze[y][x + 1].forty_two:
                             valid_neighbors.append(maze[y][x + 1])
                     if y > 0 and current.north == 1 and not current.forty_two:
                         if not maze[y - 1][x].forty_two:
                             valid_neighbors.append(maze[y - 1][x])
-                    if y < self.height - 1 and current.south == 1 and not current.forty_two:
+                    if (y < self.height - 1 and current.south == 1
+                            and not current.forty_two):
                         if not maze[y + 1][x].forty_two:
                             valid_neighbors.append(maze[y + 1][x])
                     if valid_neighbors:
@@ -236,25 +261,27 @@ class MazeGenerator:
             if current.coords == self.exit:
                 return deque(path[0:-1])
 
-            if current.north == 0 and y > 0 and (x, y - 1) not in visited_coords:
+            if (current.north == 0 and y > 0
+                    and (x, y - 1) not in visited_coords):
                 visited_coords.add((x, y - 1))
                 queue.append((maze[y - 1][x], path + [maze[y - 1][x]]))
 
-            if current.south == 0 and y < self.height - 1 and (x, y + 1) not in visited_coords:
+            if (current.south == 0 and y < self.height - 1
+                    and (x, y + 1) not in visited_coords):
                 visited_coords.add((x, y + 1))
                 queue.append((maze[y + 1][x], path + [maze[y + 1][x]]))
 
-            if current.east == 0 and x < self.width - 1 and (x + 1, y) not in visited_coords:
+            if (current.east == 0 and x < self.width - 1
+                    and (x + 1, y) not in visited_coords):
                 visited_coords.add((x + 1, y))
                 queue.append((maze[y][x + 1], path + [maze[y][x + 1]]))
 
-            if current.west == 0 and x > 0 and (x - 1, y) not in visited_coords:
+            if (current.west == 0 and x > 0
+                    and (x - 1, y) not in visited_coords):
                 visited_coords.add((x - 1, y))
                 queue.append((maze[y][x - 1], path + [maze[y][x - 1]]))
 
         return deque()
-
-
 
     def generate_maze(self) -> list[list[Cell]]:
         maze = self.generate_starting_maze()
@@ -262,12 +289,15 @@ class MazeGenerator:
             self.set_forty_two(maze)
         except ValueError as e:
             print(e)
+        except EntryExitFortyTwoError as ex:
+            raise ex
         start_x, start_y = self.entry
-        current = maze[start_y][start_x]
-        current.on_path = True
-        current.visit()
-        visited = deque()
-        solution_path = deque()
+        current: Cell | None = maze[start_y][start_x]
+        if current is not None:
+            current.on_path = True
+            current.visit()
+        visited: Deque[Cell] = deque()
+        solution_path: Deque[Cell] = deque()
         path_found: bool = False
         while current is not None:
             neighbour = self.get_neighbour(current, maze)
@@ -293,7 +323,8 @@ class MazeGenerator:
                     self.break_random_walls(maze, 0.1)
                     solution_path = self.get_shortest_path(maze)
                 exit_x, exit_y = self.exit
-                self.create_path(maze[start_y][start_x], maze[exit_y][exit_x], solution_path)
+                self.create_path(maze[start_y][start_x],
+                                 maze[exit_y][exit_x], solution_path)
                 self.generate_output_file(maze)
                 current = None
         return maze

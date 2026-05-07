@@ -45,7 +45,7 @@ def main(stdscr):
             try:
                 renderer.print_maze(stdscr, maze, config.height, config.width, start_y, start_x)
                 renderer.print_forty_two(stdscr, maze, config.height, config.width, start_y, start_x)
-                renderer.print_way(stdscr, maze, config.height, config.width, start_y, start_x)
+                renderer.print_way(stdscr, maze, mazeGen.path_visu, config.height, config.width, start_y, start_x, config.entry)
                 renderer.color_eande(
                     stdscr,
                     mazeGen.entry,

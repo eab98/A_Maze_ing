@@ -56,12 +56,15 @@ class MazeGenerator:
         else:
             return 'N'
 
-    def create_path(self, solution: Deque[Cell]) -> None:
+    def create_path(self, entry_cell: Cell, solution: Deque[Cell]) -> None:
         self.empty_path()
         if solution:
             previous = solution.popleft()
             previous.on_path = True
-            self.path.append(self.get_direction(self.entry, previous.coords))
+            if self.perfect:
+                self.path_visu.append(entry_cell)
+                self.path.append(self.get_direction(self.entry, previous.coords))
+            self.path_visu.append(previous)
             while solution:
                 current = solution.popleft()
                 current.on_path = True
@@ -230,7 +233,7 @@ class MazeGenerator:
             x, y = current.coords
 
             if current.coords == self.exit:
-                return deque(path[1:-1])
+                return deque(path[0:-1])
 
             if current.north == 0 and y > 0 and (x, y - 1) not in visited_coords:
                 visited_coords.add((x, y - 1))
@@ -288,7 +291,7 @@ class MazeGenerator:
                 if not self.perfect:
                     self.break_random_walls(maze, 0.1)
                     solution_path = self.get_shortest_path(maze)
-                self.create_path(solution_path)
+                self.create_path(maze[start_y][start_x], solution_path)
                 self.generate_output_file(maze)
                 current = None
         return maze

@@ -37,9 +37,11 @@ class MazeGenerator:
         self.perfect = perfect
         self.seed = random.Random(seed)
         self.path = []
+        self.path_visu = []
 
     def empty_path(self) -> None:
         self.path = []
+        self.path_visu = []
 
     def get_direction(self, current: tuple[int, int],
                       next: tuple[int, int]) -> str:
@@ -65,8 +67,10 @@ class MazeGenerator:
                 current.on_path = True
                 self.path.append(self.get_direction(previous.coords,
                                                     current.coords))
+                self.path_visu.append(current)
                 previous = current
             self.path.append(self.get_direction(previous.coords, self.exit))
+            self.path_visu.append(previous)
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """
@@ -130,6 +134,10 @@ class MazeGenerator:
         self.break_wall(maze[cy][cx - 3], maze[cy - 1][cx - 3])
         maze[cy - 2][cx - 3].forty_two = True
         self.break_wall(maze[cy - 1][cx - 3], maze[cy - 2][cx - 3])
+        maze[cy - 1][cx - 1].forty_two = True
+        maze[cy - 2][cx - 1].forty_two = True
+        self.break_wall(maze[cy - 1][cx - 1], maze[cy - 2][cx - 1])
+        self.break_wall(maze[cy - 1][cx - 1], maze[cy][cx - 1])
 
     def set_two(self, maze: list[list[Cell]], cx: int, cy: int) -> None:
 

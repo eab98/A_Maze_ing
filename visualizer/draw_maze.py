@@ -53,20 +53,6 @@ class MazeRenderer:
             pass
         stdsrc.refresh()
 
-    def color_eande(self, stdsrc, entry_coords, exit_coords, maze_height, maze_width, start_y, start_x):
-        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_WHITE)
-
-        xx, xy = exit_coords
-
-        try:
-            stdsrc.attron(curses.color_pair(3) | curses.A_BOLD)
-            stdsrc.addstr(start_y + (xy * 2) + 1, start_x + (xx * 3) + 1, "B*")
-            stdsrc.attroff(curses.color_pair(3) | curses.A_BOLD)
-
-        except curses.error:
-            pass
-        stdsrc.refresh()
-
     def loading_animation(self, duration=20):
         for i in range(duration + 1):
             percent = (i / duration) * 100
@@ -97,9 +83,10 @@ class MazeRenderer:
                 time.sleep(0.02)
         print(f"\n{text} [OK]")
 
-    def print_way(self, stdsrc, maze, path, height, width, start_y, start_x, entry):
+    def print_way(self, stdsrc, maze, path, height, width, start_y, start_x, entry, exit):
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(4, curses.COLOR_RED, curses.COLOR_RED)
+        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_WHITE)
         WAY_COLOR = curses.color_pair(4)
         try:
             stdsrc.attron(WAY_COLOR)
@@ -123,6 +110,12 @@ class MazeRenderer:
                     stdsrc.addstr(start_y + (ey * 2) + 1, start_x + (ex * 3) + 1, "A*")
                     stdsrc.attroff(curses.color_pair(2) | curses.A_BOLD)
                     stdsrc.attron(WAY_COLOR)
+
+                if (x, y) == exit:
+                    xx, xy = exit
+                    stdsrc.attron(curses.color_pair(3) | curses.A_BOLD)
+                    stdsrc.addstr(start_y + (xy * 2) + 1, start_x + (xx * 3) + 1, "B*")
+                    stdsrc.attroff(curses.color_pair(3) | curses.A_BOLD)
             stdsrc.attroff(WAY_COLOR)
         except curses.error:
             pass

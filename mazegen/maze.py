@@ -56,7 +56,7 @@ class MazeGenerator:
         else:
             return 'N'
 
-    def create_path(self, entry_cell: Cell, solution: Deque[Cell]) -> None:
+    def create_path(self, entry_cell: Cell, exit_cell: Cell, solution: Deque[Cell]) -> None:
         self.empty_path()
         if solution:
             previous = solution.popleft()
@@ -74,6 +74,7 @@ class MazeGenerator:
                 previous = current
             self.path.append(self.get_direction(previous.coords, self.exit))
             self.path_visu.append(previous)
+            self.path_visu.append(exit_cell)
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """
@@ -169,7 +170,7 @@ class MazeGenerator:
 
 
     def set_forty_two(self, maze: list[list[Cell]]) -> None:
-        if self.height < 8 or self.width < 10:
+        if self.height < 7 or self.width < 9:
             raise ValueError("Maze is too small to display 42")
         center_x = self.width // 2
         center_y = self.height // 2
@@ -291,7 +292,8 @@ class MazeGenerator:
                 if not self.perfect:
                     self.break_random_walls(maze, 0.1)
                     solution_path = self.get_shortest_path(maze)
-                self.create_path(maze[start_y][start_x], solution_path)
+                exit_x, exit_y = self.exit
+                self.create_path(maze[start_y][start_x], maze[exit_y][exit_x], solution_path)
                 self.generate_output_file(maze)
                 current = None
         return maze

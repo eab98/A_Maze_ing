@@ -1,12 +1,25 @@
 from mazegen import Cell
 import curses
 import time
+import random
 import sys
 
 
 class MazeRenderer:
-    def __init__(self) -> None:
-        pass
+    def __init__(self):
+        curses.start_color()
+        self.wall_colors = [1, 2, 3, 4, 5]
+
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+        curses.init_pair(5, curses.COLOR_GREEN, curses.COLOR_BLACK)
+
+        self.current_wall_color = curses.color_pair(random.choice(self.wall_colors))
+        curses.init_pair(10, curses.COLOR_RED, curses.COLOR_WHITE)
+        curses.init_pair(11, curses.COLOR_RED, curses.COLOR_RED)
+        curses.init_pair(12, curses.COLOR_YELLOW, curses.COLOR_YELLOW)
 
     def create_maze(self, height: int, width: int) -> list[list[Cell]]:
         maze = []
@@ -16,14 +29,16 @@ class MazeRenderer:
                 line.append(Cell(x, y))
             maze.append(line)
         return maze
+    
+    def which_color(self):
+        return self.current_wall_color
+    
+    def change_color(self):
+        self.current_wall_color = curses.color_pair(random.choice(self.wall_colors))
 
-    def print_maze(self, stdsrc, maze, height, width, start_y,
-                   start_x) -> None:
+    def print_maze(self, stdsrc, maze, height, width, start_y, start_x):
         stdsrc.clear()
-        curses.start_color()
-        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-        WALL_COLOR = curses.color_pair(1) | curses.A_BOLD
-
+        WALL_COLOR = self.which_color()
         try:
             stdsrc.attron(WALL_COLOR)
             for y in range(height):
@@ -86,12 +101,8 @@ class MazeRenderer:
                 time.sleep(0.02)
         print(f"\n{text} [OK]")
 
-    def print_way(self, stdsrc, maze, path, height, width, start_y,
-                  start_x, entry, exit) -> None:
-        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
-        curses.init_pair(4, curses.COLOR_RED, curses.COLOR_RED)
-        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_WHITE)
-        WAY_COLOR = curses.color_pair(4)
+    def print_way(self, stdsrc, maze, path, height, width, start_y, start_x, entry, exit):
+        WAY_COLOR = curses.color_pair(11)
         try:
             stdsrc.attron(WAY_COLOR)
             for cell in path:
@@ -106,30 +117,27 @@ class MazeRenderer:
 
                 if y < height - 1 and cell.south == 0 and maze[y+1][x].on_path:
                     stdsrc.addstr(pos_y + 1, pos_x, "  ")
+                time.sleep(0.025)
                 stdsrc.refresh()
-                time.sleep(0.05)
                 if (x, y) == entry:
                     ex, ey = entry
-                    stdsrc.attron(curses.color_pair(2) | curses.A_BOLD)
-                    stdsrc.addstr(start_y + (ey * 2) + 1,
-                                  start_x + (ex * 3) + 1, "A*")
-                    stdsrc.attroff(curses.color_pair(2) | curses.A_BOLD)
+                    stdsrc.attron(curses.color_pair(10) | curses.A_BOLD)
+                    stdsrc.addstr(start_y + (ey * 2) + 1, start_x + (ex * 3) + 1, "A*")
+                    stdsrc.attroff(curses.color_pair(10) | curses.A_BOLD)
                     stdsrc.attron(WAY_COLOR)
 
                 if (x, y) == exit:
                     xx, xy = exit
-                    stdsrc.attron(curses.color_pair(3) | curses.A_BOLD)
-                    stdsrc.addstr(start_y + (xy * 2) + 1,
-                                  start_x + (xx * 3) + 1, "B*")
-                    stdsrc.attroff(curses.color_pair(3) | curses.A_BOLD)
+                    stdsrc.attron(curses.color_pair(10) | curses.A_BOLD)
+                    stdsrc.addstr(start_y + (xy * 2) + 1, start_x + (xx * 3) + 1, "B*")
+                    stdsrc.attroff(curses.color_pair(10) | curses.A_BOLD)
             stdsrc.attroff(WAY_COLOR)
         except curses.error:
             pass
         stdsrc.refresh()
 
     def print_forty_two(self, stdsrc, maze, height, width, start_y, start_x):
-        curses.init_pair(5, curses.COLOR_YELLOW, curses.COLOR_YELLOW)
-        WAY_COLOR = curses.color_pair(5)
+        WAY_COLOR = curses.color_pair(12)
         try:
             stdsrc.attron(WAY_COLOR)
             for y in range(height):

@@ -3,6 +3,10 @@ from typing import Deque
 import random
 
 
+class EntryExitFortyTwoError(Exception):
+    pass
+
+
 class Cell:
     def __init__(self, x: int, y: int):
         self.north = 1
@@ -177,6 +181,12 @@ class MazeGenerator:
 
         self.set_four(maze, center_x, center_y)
         self.set_two(maze, center_x, center_y)
+        for line in maze:
+            for cell in line:
+                if cell.forty_two and cell.coords == self.entry:
+                    raise EntryExitFortyTwoError(f"Invalid entry value {self.entry} clashes with 42 display")
+                if cell.forty_two and cell.coords == self.exit:
+                    raise EntryExitFortyTwoError(f"Invalid exit value {self.exit} clashes with 42 display")
 
     def generate_output_file(self, maze: list[list[Cell]]) -> None:
         try:
@@ -262,6 +272,8 @@ class MazeGenerator:
             self.set_forty_two(maze)
         except ValueError as e:
             print(e)
+        except EntryExitFortyTwoError as ex:
+            raise ex
         start_x, start_y = self.entry
         current = maze[start_y][start_x]
         current.on_path = True

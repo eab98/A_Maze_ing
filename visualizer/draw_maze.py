@@ -111,6 +111,7 @@ class MazeRenderer:
             for y in range(height):
                 for x in range(width):
                     cell = maze[y][x]
+                    time.sleep(0.02)
                     if cell.on_path:
                         pos_y = start_y + (y * 2) + 1
                         pos_x = start_x + (x * 3) + 1
@@ -121,6 +122,32 @@ class MazeRenderer:
                             stdsrc.addstr(pos_y, pos_x + 2, " ")
 
                         if y < height - 1 and cell.south == 0 and maze[y+1][x].on_path:
+                            stdsrc.addstr(pos_y + 1, pos_x, "  ")
+                # time.sleep(0.05)
+            stdsrc.refresh()
+            stdsrc.attroff(WAY_COLOR)
+        except curses.error:
+            pass
+        stdsrc.refresh()
+
+    def print_forty_two(self, stdsrc, maze, height, width, start_y, start_x):
+        curses.init_pair(5, curses.COLOR_YELLOW, curses.COLOR_YELLOW)
+        WAY_COLOR = curses.color_pair(5)
+        try:
+            stdsrc.attron(WAY_COLOR)
+            for y in range(height):
+                for x in range(width):
+                    cell = maze[y][x]
+                    if cell.forty_two:
+                        pos_y = start_y + (y * 2) + 1
+                        pos_x = start_x + (x * 3) + 1
+
+                        stdsrc.addstr(pos_y, pos_x, "  ") 
+
+                        if x < width - 1 and cell.east == 0 and maze[y][x+1].forty_two:
+                            stdsrc.addstr(pos_y, pos_x + 2, " ")
+
+                        if y < height - 1 and cell.south == 0 and maze[y+1][x].forty_two:
                             stdsrc.addstr(pos_y + 1, pos_x, "  ")
             stdsrc.attroff(WAY_COLOR)
         except curses.error:

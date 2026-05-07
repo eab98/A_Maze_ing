@@ -115,26 +115,45 @@ class MazeGenerator:
             neighbour.south = 0
 
     def set_four(self, maze: list[list[Cell]], cx: int, cy: int) -> None:
+        if self.width % 2 == 0:
+            cx -= 1
         maze[cy][cx - 1].forty_two = True
         maze[cy][cx - 2].forty_two = True
+        self.break_wall(maze[cy][cx - 1], maze[cy][cx - 2])
         maze[cy][cx - 3].forty_two = True
+        self.break_wall(maze[cy][cx - 2], maze[cy][cx - 3])
         maze[cy + 1][cx - 1].forty_two = True
+        self.break_wall(maze[cy][cx - 1], maze[cy + 1][cx - 1])
         maze[cy + 2][cx - 1].forty_two = True
+        self.break_wall(maze[cy + 2][cx - 1], maze[cy + 1][cx - 1])
         maze[cy - 1][cx - 3].forty_two = True
+        self.break_wall(maze[cy][cx - 3], maze[cy - 1][cx - 3])
         maze[cy - 2][cx - 3].forty_two = True
+        self.break_wall(maze[cy - 1][cx - 3], maze[cy - 2][cx - 3])
 
     def set_two(self, maze: list[list[Cell]], cx: int, cy: int) -> None:
+
         maze[cy][cx + 1].forty_two = True
         maze[cy][cx + 2].forty_two = True
         maze[cy][cx + 3].forty_two = True
+        self.break_wall(maze[cy][cx + 1], maze[cy][cx + 2])
+        self.break_wall(maze[cy][cx + 3], maze[cy][cx + 2])
         maze[cy - 1][cx + 3].forty_two = True
         maze[cy - 2][cx + 3].forty_two = True
+        self.break_wall(maze[cy - 2][cx + 3], maze[cy - 1][cx + 3])
         maze[cy - 2][cx + 2].forty_two = True
+        self.break_wall(maze[cy - 2][cx + 2], maze[cy - 2][cx + 3])
         maze[cy - 2][cx + 1].forty_two = True
+        self.break_wall(maze[cy - 2][cx + 1], maze[cy - 2][cx + 2])
         maze[cy + 1][cx + 1].forty_two = True
         maze[cy + 2][cx + 1].forty_two = True
+        self.break_wall(maze[cy + 1][cx + 1], maze[cy][cx + 1])
         maze[cy + 2][cx + 2].forty_two = True
+        self.break_wall(maze[cy + 1][cx + 1], maze[cy + 2][cx + 1])
+        self.break_wall(maze[cy + 2][cx + 1], maze[cy + 2][cx + 2])
         maze[cy + 2][cx + 3].forty_two = True
+        self.break_wall(maze[cy + 2][cx + 2], maze[cy + 2][cx + 3])
+        self.break_wall(maze[cy][cx + 3], maze[cy - 1][cx + 3])
 
 
 
@@ -174,14 +193,18 @@ class MazeGenerator:
                 if self.seed.random() < probs:
                     current = maze[y][x]
                     valid_neighbors = []
-                    if x > 0 and current.west == 1:
-                        valid_neighbors.append(maze[y][x - 1])
-                    if x < self.width - 1 and current.east == 1:
-                        valid_neighbors.append(maze[y][x + 1])
-                    if y > 0 and current.north == 1:
-                        valid_neighbors.append(maze[y - 1][x])
-                    if y < self.height - 1 and current.south == 1:
-                        valid_neighbors.append(maze[y + 1][x])
+                    if x > 0 and current.west == 1 and not current.forty_two:
+                        if not maze[y][x - 1].forty_two:
+                            valid_neighbors.append(maze[y][x - 1])
+                    if x < self.width - 1 and current.east == 1 and not current.forty_two:
+                        if not maze[y][x + 1].forty_two:
+                            valid_neighbors.append(maze[y][x + 1])
+                    if y > 0 and current.north == 1 and not current.forty_two:
+                        if not maze[y - 1][x].forty_two:
+                            valid_neighbors.append(maze[y - 1][x])
+                    if y < self.height - 1 and current.south == 1 and not current.forty_two:
+                        if not maze[y + 1][x].forty_two:
+                            valid_neighbors.append(maze[y + 1][x])
                     if valid_neighbors:
                         neighbor = self.seed.choice(valid_neighbors)
                         self.break_wall(current, neighbor)

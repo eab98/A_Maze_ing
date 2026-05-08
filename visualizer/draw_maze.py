@@ -19,7 +19,7 @@ class MazeRenderer:
         self.wall_color = curses.color_pair(random.choice(self.wall_colors))
         curses.init_pair(10, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(11, curses.COLOR_RED, curses.COLOR_RED)
-        curses.init_pair(12, curses.COLOR_YELLOW, curses.COLOR_YELLOW)
+        curses.init_pair(12, curses.COLOR_MAGENTA, curses.COLOR_MAGENTA)
 
     def create_maze(self, height: int, width: int) -> list[list[Cell]]:
         maze = []
@@ -96,7 +96,7 @@ class MazeRenderer:
                     ex, ey = entry
                     stdsrc.attron(curses.color_pair(10) | curses.A_BOLD)
                     stdsrc.addstr(start_y + (ey * 2) + 1,
-                                  start_x + (ex * 3) + 1, "A*")
+                                  start_x + (ex * 3) + 1, "EN")
                     stdsrc.attroff(curses.color_pair(10) | curses.A_BOLD)
                     stdsrc.attron(WAY_COLOR)
 
@@ -104,7 +104,7 @@ class MazeRenderer:
                     xx, xy = exit
                     stdsrc.attron(curses.color_pair(10) | curses.A_BOLD)
                     stdsrc.addstr(start_y + (xy * 2) + 1,
-                                  start_x + (xx * 3) + 1, "B*")
+                                  start_x + (xx * 3) + 1, "EX")
                     stdsrc.attroff(curses.color_pair(10) | curses.A_BOLD)
                     stdsrc.attron(WAY_COLOR)
 

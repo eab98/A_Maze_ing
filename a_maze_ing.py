@@ -1,4 +1,4 @@
-from mazegen import MazeGenerator
+from mazegen import MazeGenerator, EntryExitFortyTwoError
 from visualizer import MazeRenderer
 from parsing import load_config
 import curses
@@ -15,7 +15,13 @@ def main(stdscr):
         config.height, config.width, config.entry, config.exit,
         config.output_file, config.perfect, config.seed
     )
-    maze = mazeGen.generate_maze()
+    maze = mazeGen.generate_starting_maze()
+    forty_two = True
+    try:
+        mazeGen.set_forty_two(maze)
+    except ValueError as e:
+        forty_two = False
+    maze = mazeGen.generate_maze(maze)
     renderer = MazeRenderer()
 
     show_path = True
@@ -77,6 +83,12 @@ def main(stdscr):
         cmd_win.addstr(2, 2, "Display/Hide the path : Press (P)")
         cmd_win.addstr(3, 2, "Change wall colors : Press (C)")
         cmd_win.addstr(4, 2, "Exit : Press (Q)")
+        if not forty_two:
+            curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+            ALERT_COLOR = curses.color_pair(1)
+            cmd_win.attron(ALERT_COLOR)
+            cmd_win.addstr(6, 2, "Maze is too small to display 42")
+            cmd_win.attroff(ALERT_COLOR)
         cmd_win.refresh()
 
     draw_scene(show_path, force_animate=True)
@@ -103,7 +115,14 @@ def main(stdscr):
                 config.height, config.width, config.entry, config.exit,
                 config.output_file, config.perfect, config.seed
             )
-            maze = mazeGen.generate_maze()
+            maze = mazeGen.generate_starting_maze()
+            forty_two = True
+            try:
+                mazeGen.set_forty_two(maze)
+            except ValueError as e:
+                forty_two = False
+            maze = mazeGen.generate_maze(maze)
+            renderer = MazeRenderer()
             draw_scene(show_path, force_animate=True)
 
 
@@ -111,4 +130,4 @@ if __name__ == "__main__":
     try:
         curses.wrapper(main)
     except Exception as e:
-        print("Erreur :", e)
+        print("On a vu tkt:\n", e)

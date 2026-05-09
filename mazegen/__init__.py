@@ -1,4 +1,4 @@
-from .maze import Cell, MazeGenerator
+from .maze import Cell, MazeGenerator, EntryExitFortyTwoError
 
-__all__ = ['Cell', 'MazeGenerator']
+__all__ = ['Cell', 'MazeGenerator', 'EntryExitFortyTwoError']
 __author__ = "Bilal El Azzouzi, Lindsay Moreau"

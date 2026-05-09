@@ -2,8 +2,8 @@ from pydantic import BaseModel, Field, model_validator, field_validator
 
 
 class MazeConfig(BaseModel):
-    width: int = Field(..., gt=0)
-    height: int = Field(..., gt=0)
+    width: int = Field(..., gt=1)
+    height: int = Field(..., gt=1)
     entry: tuple[int, int] = Field(...)
     exit: tuple[int, int] = Field(...)
     output_file: str = Field(..., min_length=1)
@@ -34,6 +34,9 @@ class MazeConfig(BaseModel):
     def check_coordinates(self) -> 'MazeConfig':
         entry_x, entry_y = self.entry
         exit_x, exit_y = self.exit
+        
+        if self.entry == self.exit:
+            raise ValueError("Exit coords must be different from entry coords")
 
         if not (0 <= entry_x < self.width) or not (0 <= entry_y < self.height):
             msg = (f"ENTRY coordinates {self.entry} are out of " +

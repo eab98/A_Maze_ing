@@ -63,7 +63,7 @@ def main(stdscr: Any) -> None:
         cmd_win.refresh()
 
         title_win = curses.newwin(3, current_w, 1, 0)
-        title = "=== A-MAZE-ING GENERATOR ==="
+        title = "=== A-MAZE-ING ==="
         t_x = max(0, (current_w - len(title)) // 2)
         title_win.attron(curses.A_BOLD | curses.A_UNDERLINE)
         title_win.addstr(1, t_x, title)

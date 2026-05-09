@@ -36,7 +36,7 @@ def main(stdscr):
         current_h, current_w = stdscr.getmaxyx()
         maze_h = (config.height * 2) + 1
         maze_w = (config.width * 3) + 1
-        margin_top = 5
+        margin_top = 4
         total_h = maze_h + 8 + margin_top + 2
 
         if current_h < total_h or current_w < maze_w:

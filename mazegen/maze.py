@@ -82,6 +82,10 @@ class MazeGenerator:
             self.path.append(self.get_direction(previous.coords, self.exit))
             self.path_visu.append(previous)
             self.path_visu.append(exit_cell)
+        else:
+            self.path.append(self.get_direction(self.entry, self.exit))
+            self.path_visu.append(entry_cell)
+            self.path_visu.append(exit_cell)
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """

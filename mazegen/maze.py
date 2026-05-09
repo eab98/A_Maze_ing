@@ -82,6 +82,10 @@ class MazeGenerator:
             self.path.append(self.get_direction(previous.coords, self.exit))
             self.path_visu.append(previous)
             self.path_visu.append(exit_cell)
+        else:
+            self.path.append(self.get_direction(self.entry, self.exit))
+            self.path_visu.append(entry_cell)
+            self.path_visu.append(exit_cell)
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """
@@ -96,26 +100,93 @@ class MazeGenerator:
                 maze[y].append(Cell(x, y))
         return maze
 
+    def creates_3x3_open_area(self, maze: list[list[Cell]], current: Cell, neighbour: Cell) -> bool:
+        """
+        Checks if breaking the wall between current and neighbour would form a
+        fully open 3x3 area of cells with no internal walls.
+        """
+        cx, cy = current.coords
+        nx, ny = neighbour.coords
+
+        if cx < nx:
+            current.east, neighbour.west = 0, 0
+        elif cx > nx:
+            current.west, neighbour.east = 0, 0
+        elif cy < ny:
+            current.south, neighbour.north = 0, 0
+        elif cy > ny:
+            current.north, neighbour.south = 0, 0
+
+        violation_found = False
+
+        min_y = min(cy, ny) - 2
+        max_y = max(cy, ny)
+        min_x = min(cx, nx) - 2
+        max_x = max(cx, nx)
+
+        for top_y in range(min_y, max_y + 1):
+            for top_x in range(min_x, max_x + 1):
+                if 0 <= top_y and top_y + 2 < self.height and 0 <= top_x and top_x + 2 < self.width:
+
+                    is_fully_open = True
+                    for dy in range(3):
+                        for dx in range(3):
+                            cell = maze[top_y + dy][top_x + dx]
+
+                            if dx < 2 and cell.east != 0:
+                                is_fully_open = False
+                                break
+
+                            if dy < 2 and cell.south != 0:
+                                is_fully_open = False
+                                break
+
+                        if not is_fully_open:
+                            break
+
+                    if is_fully_open:
+                        violation_found = True
+                        break
+            if violation_found:
+                break
+
+        if cx < nx:
+            current.east, neighbour.west = 1, 1
+        elif cx > nx:
+            current.west, neighbour.east = 1, 1
+        elif cy < ny:
+            current.south, neighbour.north = 1, 1
+        elif cy > ny:
+            current.north, neighbour.south = 1, 1
+
+        return violation_found
+
     def get_neighbour(self, cell: Cell,
                       maze: list[list[Cell]]) -> Cell | None:
         neighbours = []
+        candidates = []
         cell_x, cell_y = cell.coords
         if (cell_x < self.width - 1
                 and not (maze[cell_y][cell_x + 1].visited
                          or maze[cell_y][cell_x + 1].forty_two)):
-            neighbours.append(maze[cell_y][cell_x + 1])
+            candidates.append(maze[cell_y][cell_x + 1])
         if (cell_y < self.height - 1
                 and not (maze[cell_y + 1][cell_x].visited
                          or maze[cell_y + 1][cell_x].forty_two)):
-            neighbours.append(maze[cell_y + 1][cell_x])
+            candidates.append(maze[cell_y + 1][cell_x])
         if (cell_x > 0
                 and not (maze[cell_y][cell_x - 1].visited
                          or maze[cell_y][cell_x - 1].forty_two)):
-            neighbours.append(maze[cell_y][cell_x - 1])
+            candidates.append(maze[cell_y][cell_x - 1])
         if (cell_y > 0
                 and not (maze[cell_y - 1][cell_x].visited
                          or maze[cell_y - 1][cell_x].forty_two)):
-            neighbours.append(maze[cell_y - 1][cell_x])
+            candidates.append(maze[cell_y - 1][cell_x])
+
+        for cand in candidates:
+            if not self.creates_3x3_open_area(maze, cell, cand):
+                neighbours.append(cand)
+
         if len(neighbours) > 0:
             return self.seed.choice(neighbours)
         return None
@@ -229,18 +300,18 @@ class MazeGenerator:
                     current = maze[y][x]
                     valid_neighbors = []
                     if x > 0 and current.west == 1 and not current.forty_two:
-                        if not maze[y][x - 1].forty_two:
+                        if not maze[y][x - 1].forty_two and not self.creates_3x3_open_area(maze, current, maze[y][x - 1]):
                             valid_neighbors.append(maze[y][x - 1])
                     if (x < self.width - 1 and current.east == 1
                             and not current.forty_two):
-                        if not maze[y][x + 1].forty_two:
+                        if not maze[y][x + 1].forty_two and not self.creates_3x3_open_area(maze, current, maze[y][x + 1]):
                             valid_neighbors.append(maze[y][x + 1])
                     if y > 0 and current.north == 1 and not current.forty_two:
-                        if not maze[y - 1][x].forty_two:
+                        if not maze[y - 1][x].forty_two and not self.creates_3x3_open_area(maze, current, maze[y - 1][x]):
                             valid_neighbors.append(maze[y - 1][x])
                     if (y < self.height - 1 and current.south == 1
                             and not current.forty_two):
-                        if not maze[y + 1][x].forty_two:
+                        if not maze[y + 1][x].forty_two and not self.creates_3x3_open_area(maze, current, maze[y + 1][x]):
                             valid_neighbors.append(maze[y + 1][x])
                     if valid_neighbors:
                         neighbor = self.seed.choice(valid_neighbors)

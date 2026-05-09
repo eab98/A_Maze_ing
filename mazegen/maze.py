@@ -1,5 +1,4 @@
 from collections import deque
-from sys import path
 from typing import Deque
 import random
 
@@ -299,7 +298,7 @@ class MazeGenerator:
                     f.write(str(i))
                 f.write('\n')
 
-        except FileNotFoundError:
+        except (FileNotFoundError, PermissionError):
             print("Output file creation impossible")
 
     def break_random_walls(self, maze: list[list[Cell]], probs: float) -> None:

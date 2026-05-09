@@ -37,8 +37,8 @@ class MazeRenderer:
     def change_color(self) -> None:
         self.wall_color = curses.color_pair(random.choice(self.wall_colors))
 
-    def print_maze(self, stdsrc: Any, maze: Any, height: Any,
-                   width: Any, start_y: Any, start_x: Any) -> None:
+    def print_maze(self, stdsrc: Any, maze: list[list[Cell]], height: int,
+                   width: int, start_y: Any, start_x: Any) -> None:
         stdsrc.clear()
         WALL_COLOR = self.which_color()
         try:
@@ -71,8 +71,8 @@ class MazeRenderer:
             pass
         stdsrc.refresh()
 
-    def print_way(self, stdsrc: Any, maze: Any, path: Any,
-                  height: Any, width: Any,
+    def print_way(self, stdsrc: Any, maze: list[list[Cell]], path: list[Cell],
+                  height: int, width: int,
                   start_y: Any, start_x: Any, entry: Any,
                   exit: Any, animate: bool = False) -> None:
         WAY_COLOR = curses.color_pair(11)
@@ -116,8 +116,8 @@ class MazeRenderer:
             pass
         stdsrc.refresh()
 
-    def print_forty_two(self, stdsrc: Any, maze: Any,
-                        height: Any, width: Any, start_y: Any,
+    def print_forty_two(self, stdsrc: Any, maze: list[list[Cell]],
+                        height: int, width: int, start_y: Any,
                         start_x: Any) -> None:
         WAY_COLOR = curses.color_pair(12)
         try:

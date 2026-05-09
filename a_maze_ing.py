@@ -1,4 +1,5 @@
 from mazegen import MazeGenerator
+from pydantic import ValidationError
 from visualizer import MazeRenderer
 from parsing import load_config
 import curses
@@ -128,5 +129,8 @@ def main(stdscr: Any) -> None:
 if __name__ == "__main__":
     try:
         curses.wrapper(main)
+    except ValidationError as er:
+        for e in er.errors():
+            print("! An error has been detected !:\n", e['loc'][0], e['msg'])
     except Exception as e:
         print("! An error has been detected !:\n", e)

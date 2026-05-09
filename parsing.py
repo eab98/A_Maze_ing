@@ -60,5 +60,9 @@ def load_config(filepath: str) -> MazeConfig:
             line = line.strip()
             if line and not line.startswith('#') and '=' in line:
                 key, val = line.split('=', 1)
+                conf_key = key.strip().lower()
+                if conf_key in config_dict.keys():
+                    msg = f"Field {conf_key} is repeated in the config file"
+                    raise ValueError(msg)
                 config_dict[key.strip().lower()] = val.strip()
     return MazeConfig(**config_dict)

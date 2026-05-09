@@ -1,14 +1,26 @@
+"""
+This module contains the MazeGenerator class, which generates a maze
+comprising Cells from the Cell class.
+"""
 from collections import deque
 from typing import Deque
 import random
 
 
 class EntryExitFortyTwoError(Exception):
+    """
+    Exception raised when the entry or the exit of the maze clash with the
+    42 display at the center of the maze.
+    """
+
     pass
 
 
 class Cell:
+    """Hold information about a cell in the maze."""
+
     def __init__(self, x: int, y: int):
+        """Initialise a cell with its x,y coordinates within the maze."""
         self.north = 1
         self.south = 1
         self.east = 1
@@ -19,21 +31,46 @@ class Cell:
         self.forty_two = False
 
     def is_visited(self) -> bool:
+        """Return True if the cell has been visited, False otherwise."""
         return self.visited
 
     def visit(self) -> None:
+        """Set self.visited to True to indicate that the cell was visited."""
         self.visited = True
 
     def get_value(self) -> int:
+        """
+        Return a decimal value representing the cell's state (i.e. which
+            walls are open (0) and which are not).
+        """
         return ((2**3) * self.west + (2**2) * self.south + 2 * self.east
                 + self.north)
 
 
 class MazeGenerator:
+    """
+    Generate a maze (perfect or not) and get the shortest path from entry
+    to exit.
+    """
+
     def __init__(self, height: int, width: int, entry: tuple[int, int],
                  exit: tuple[int, int], output_file: str,
                  perfect: bool,
                  seed: int | None) -> None:
+        """
+        Initialise the maze generator with the desired values.
+
+        Arguments:
+            height: An integer, the height of the maze.
+            width: An integer, the width of the maze.
+            entry: A tuple of integers representing the start of the solution.
+            exit: A tuple of integers representing the end of the solution.
+            output_file: The file in which to write the output of the maze.
+            perfect: A boolean indicating if the maze must be perfect or not.
+               A perfect maze has one and ONLY one path between entry and exit.
+            seed: An integer indicating the desired seed. If none is provided,
+                the seed is determined at random.
+        """
         self.height = height
         self.width = width
         self.entry = entry
@@ -45,17 +82,37 @@ class MazeGenerator:
         self.path_visu: list[Cell] = []
 
     def get_visual_solution(self) -> list[Cell]:
+        """
+        Return a list of cells representing the shortest solution to the maze.
+        """
         return self.path_visu
 
     def get_solution(self) -> list[str]:
+        """
+        Return a list of strings indicating the directions to follow to go
+            from the entry of the maze to the exit.
+        """
         return self.path
 
     def empty_path(self) -> None:
+        """
+        Reset the contents of self.path and self.path_visu to empty lists.
+        """
         self.path = []
         self.path_visu = []
 
     def get_direction(self, current: tuple[int, int],
                       next: tuple[int, int]) -> str:
+        """
+        Determine the direction (North, East, South, West) to take to move
+        from the current cell to the next.
+
+        Arguments:
+            current: the current Cell.
+            next: the next Cell.
+        Return:
+             A string N, E, S, W.
+        """
         current_x, current_y = current
         next_x, next_y = next
         if current_x < next_x:
@@ -69,6 +126,20 @@ class MazeGenerator:
 
     def create_path(self, entry_cell: Cell, exit_cell: Cell,
                     solution: Deque[Cell]) -> None:
+        """
+        Modify the content of self.path with the directions (N, S, E W) to
+        go from one cell on the solution path to the next. Add each cell
+        on the path to self.path_visu for visual representation.
+
+        Arguments:
+            entry_cell: the cell representing the starting point of the path.
+            exit_cell:  the cell representing the end point of the path.
+            solution:  a queue containing all cells representing the solution
+                except entry and exit.
+
+        Return:
+            None, modifies self.path and self.path_visu in place.
+        """
         self.empty_path()
         if solution:
             previous = solution.popleft()
@@ -95,9 +166,10 @@ class MazeGenerator:
 
     def generate_starting_maze(self) -> list[list[Cell]]:
         """
-        Generates a starting maze filled with fully enclosed cells
-        :return: A list of lists representing the starting maze where each
-        list represents a line
+        Generate a starting maze filled with fully enclosed cells.
+
+        Return: A list of lists representing the starting maze where each
+            list represents a line.
         """
         maze: list[list[Cell]] = []
         for y in range(self.height):
@@ -108,9 +180,16 @@ class MazeGenerator:
 
     def creates_3x3_open_area(self, maze: list[list[Cell]],
                               current: Cell, neighbour: Cell) -> bool:
-        """
-        Checks if breaking the wall between current and neighbour would form a
-        fully open 3x3 area of cells with no internal walls.
+        """Check if breaking a wall forms an open 3x3 area of cells.
+
+        Arguments:
+            maze: A list of lists of cells holding the current state of
+                the maze.
+            current: the current cell.
+            neighbour: the neighbour of the current cell.
+
+        Return: A boolean true if breaking the wall creates an open area,
+            false otherwise.
         """
         cx, cy = current.coords
         nx, ny = neighbour.coords
@@ -171,6 +250,12 @@ class MazeGenerator:
 
     def get_neighbour(self, cell: Cell,
                       maze: list[list[Cell]]) -> Cell | None:
+        """Return an unvisited neighbour Cell, or None if none exists.
+
+        cell: a cell in the maze.
+        maze: a list of lists of cells representing the current state of
+            the maze.
+        """
         neighbours = []
         candidates = []
         cell_x, cell_y = cell.coords
@@ -200,6 +285,9 @@ class MazeGenerator:
         return None
 
     def break_wall(self, current: Cell, neighbour: Cell) -> None:
+        """
+        Break the shared wall between the current Cell and its neighbour.
+        """
         current_x, current_y = current.coords
         neighbour_x, neighbour_y = neighbour.coords
 
@@ -217,6 +305,15 @@ class MazeGenerator:
             neighbour.south = 0
 
     def set_four(self, maze: list[list[Cell]], cx: int, cy: int) -> None:
+        """Set self.forty_two to True and break walls for the center '4'.
+
+        Arguments:
+            maze: A list of lists of cells representing the current state of
+                the maze.
+
+            cx, cy: Integers representing the coordinates of the center
+                of the maze.
+        """
         if self.width % 2 == 0:
             cx -= 1
         maze[cy][cx - 1].forty_two = True
@@ -238,6 +335,15 @@ class MazeGenerator:
         self.break_wall(maze[cy - 1][cx - 1], maze[cy][cx - 1])
 
     def set_two(self, maze: list[list[Cell]], cx: int, cy: int) -> None:
+        """Set self.forty_two to True and break walls for the center '2'.
+
+        Arguments:
+            maze: A list of lists of cells representing the current state of
+                the maze.
+
+            cx, cy: Integers representing the coordinates of the center
+                of the maze.
+        """
 
         maze[cy][cx + 1].forty_two = True
         maze[cy][cx + 2].forty_two = True
@@ -262,6 +368,14 @@ class MazeGenerator:
         self.break_wall(maze[cy][cx + 3], maze[cy - 1][cx + 3])
 
     def set_forty_two(self, maze: list[list[Cell]]) -> None:
+        """
+        Find the Cells needed to display 42 at the center of the maze.
+
+        Raises:
+            ValueError: Raised if the maze is too small to display the 42
+            EntryExitFortyTwoError: Raised if the values of self.entry or
+                self.exit clash with the forty-two display.
+        """
         if self.height < 7 or self.width < 9:
             raise ValueError("Maze is too small to display 42")
         center_x = self.width // 2
@@ -281,6 +395,18 @@ class MazeGenerator:
                     raise EntryExitFortyTwoError(msg)
 
     def generate_output_file(self, maze: list[list[Cell]]) -> None:
+        """Generate an output file containing the maze's state and path.
+
+        The file contains the following information:
+            - self.height lines of self.width characters where each character
+                is a hexadecimal digit representing the state of a Cell.
+            - self.entry and self.exit coordinates.
+            - The directions (NSEW) to follow the path from entry to exit.
+        Raises:
+            FileNotFoundError: Raised if the output file creation impossible.
+            PermissionError: Raised if the output file creation impossible due
+                to insufficient permissions.
+        """
         try:
             with open(self.output_file, 'w') as f:
                 for line in maze:
@@ -302,6 +428,12 @@ class MazeGenerator:
             print("Output file creation impossible")
 
     def break_random_walls(self, maze: list[list[Cell]], probs: float) -> None:
+        """
+        Break walls at (pseudo-)random in the maze.
+
+        Arguments:
+            probs: A float representing the probability that a wall be broken.
+        """
         for y in range(self.height):
             for x in range(self.width):
                 if self.seed.random() < probs:
@@ -342,6 +474,13 @@ class MazeGenerator:
                         self.break_wall(current, neighbor)
 
     def get_shortest_path(self, maze: list[list[Cell]]) -> Deque[Cell]:
+        """
+        Find the shortest path from entry to exit in an imperfect maze
+        (i.e. a maze in which there are multiple possible paths from entry
+        to exit).
+
+        Return: a queue containing the shortest path possible.
+        """
         start_x, start_y = self.entry
 
         queue = deque([(maze[start_y][start_x], [maze[start_y][start_x]])])
@@ -379,6 +518,15 @@ class MazeGenerator:
         return deque()
 
     def generate_maze(self, maze: list[list[Cell]]) -> list[list[Cell]]:
+        """
+        Generate a maze and finds the shortest path from entry to exit.
+        The shortest path in directly stored in self.path and self.path_visu.
+
+        Argument:
+            maze: a list of lists of Cells representing the maze.
+
+        Return: a list of lists of Cells representing the finished maze.
+        """
         start_x, start_y = self.entry
         current: Cell | None = maze[start_y][start_x]
         if current is not None:

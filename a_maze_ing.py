@@ -30,8 +30,7 @@ def main(stdscr: Any) -> None:
 
     def draw_scene(show_path: bool, force_animate: bool) -> None:
         nonlocal path_already_animated
-        show_path = True
-        force_animate = False
+
         stdscr.clear()
         stdscr.refresh()
 
@@ -45,6 +44,23 @@ def main(stdscr: Any) -> None:
             stdscr.addstr(0, 0, "Terminal trop petit !")
             stdscr.refresh()
             return
+        
+        cmd_h, cmd_w = 8, 60
+        cmd_y = margin_top + maze_h + 1
+        cmd_x = max(0, (current_w - cmd_w) // 2)
+        cmd_win = curses.newwin(cmd_h, cmd_w, cmd_y, cmd_x)
+        cmd_win.box()
+        cmd_win.addstr(1, 2, "Generate a new maze : Press (R)")
+        cmd_win.addstr(2, 2, "Display/Hide the path : Press (P)")
+        cmd_win.addstr(3, 2, "Change wall colors : Press (C)")
+        cmd_win.addstr(4, 2, "Exit : Press (Q)")
+        if not forty_two:
+            curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+            ALERT_COLOR = curses.color_pair(1)
+            cmd_win.attron(ALERT_COLOR)
+            cmd_win.addstr(6, 2, "Maze is too small to display 42")
+            cmd_win.attroff(ALERT_COLOR)
+        cmd_win.refresh()
 
         title_win = curses.newwin(3, current_w, 1, 0)
         title = "=== A-MAZE-ING GENERATOR ==="
@@ -63,35 +79,16 @@ def main(stdscr: Any) -> None:
                                  config.width, 0, 0)
 
         if show_path:
-            should_animate = force_animate and not path_already_animated
-
+            animate_now = force_animate and not path_already_animated
             renderer.print_way(
                 maze_win, maze, mazeGen.path_visu, config.height, config.width,
                 0, 0, config.entry, config.exit,
-                animate=should_animate
+                animate=animate_now
             )
-
-            if should_animate:
+            if animate_now:
                 path_already_animated = True
 
         maze_win.refresh()
-
-        cmd_h, cmd_w = 8, 60
-        cmd_y = margin_top + maze_h + 1
-        cmd_x = max(0, (current_w - cmd_w) // 2)
-        cmd_win = curses.newwin(cmd_h, cmd_w, cmd_y, cmd_x)
-        cmd_win.box()
-        cmd_win.addstr(1, 2, "Generate a new maze : Press (R)")
-        cmd_win.addstr(2, 2, "Display/Hide the path : Press (P)")
-        cmd_win.addstr(3, 2, "Change wall colors : Press (C)")
-        cmd_win.addstr(4, 2, "Exit : Press (Q)")
-        if not forty_two:
-            curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
-            ALERT_COLOR = curses.color_pair(1)
-            cmd_win.attron(ALERT_COLOR)
-            cmd_win.addstr(6, 2, "Maze is too small to display 42")
-            cmd_win.attroff(ALERT_COLOR)
-        cmd_win.refresh()
 
     draw_scene(show_path, force_animate=True)
 
@@ -126,6 +123,7 @@ def main(stdscr: Any) -> None:
             maze = mazeGen.generate_maze(maze)
             renderer = MazeRenderer()
             draw_scene(show_path, force_animate=True)
+
 
 
 if __name__ == "__main__":

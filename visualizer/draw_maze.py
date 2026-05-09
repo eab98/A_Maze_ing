@@ -74,8 +74,7 @@ class MazeRenderer:
     def print_way(self, stdsrc: Any, maze: Any, path: Any,
                   height: Any, width: Any,
                   start_y: Any, start_x: Any, entry: Any,
-                  exit: Any, animate: bool) -> None:
-        animate = False
+                  exit: Any, animate: bool = False) -> None:
         WAY_COLOR = curses.color_pair(11)
         try:
             stdsrc.attron(WAY_COLOR)

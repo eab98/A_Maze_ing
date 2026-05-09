@@ -5,8 +5,6 @@
 
 ### Description: 
 
-Le but du projet était de créer un generateur de labyrinthe et de le display à l'écran. Le maze devait pouvoit se créer en suivant le fichier config.txt, donc avec une taille donnée mais aussi des coordonées d'entrée et de sortie. De là, chemin devait se générer entre l'entrée et la sortie. 
-
 Le projet A-Maze-ing consiste à concevoir un programme capable de générer des labyrinthes parfaits (sans cycles et où chaque point est accessible) et de proposer, le cas échéant, une solution pour les résoudre. L'objectif principal est de manipuler des algorithmes de théorie des graphes et de gérer des structures de données complexes tout en respectant des contraintes de performance et de configuration.
 
 ### Instructions : 
@@ -16,7 +14,7 @@ installation : Clonez le dépôt et rendez-vous à la racine du projet : git clo
 exécution : 
 `make run`
 
-format de la config : ./a_maze_ing.py config.txt
+format de la config : `./a_maze_ing.py config.txt`
 
 Format complet du config file (toutes les clés, types, exemples)
 Algorithme de génération choisi et justification du choix // plus facile a utiliser: genere et cherche en meme temps + plus joli 
@@ -24,7 +22,7 @@ Code réutilisable : comment importer MazeGenerator, exemple d'usage, accès à 
 
 ### Gestion d'équipe : 
 bel-azzo = Algorithm part // lmoreau = Visual part
-Nous avons répartit la réalisation du projet en 7 jours. 
+Nous avons répartit la réalisation du projet sur 7 jours. 
 
 bien marcher : bonne repartition, aide mutuelle, cooperation, juste parfait   
 a ameliorer : 

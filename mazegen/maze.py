@@ -100,7 +100,8 @@ class MazeGenerator:
                 maze[y].append(Cell(x, y))
         return maze
 
-    def creates_3x3_open_area(self, maze: list[list[Cell]], current: Cell, neighbour: Cell) -> bool:
+    def creates_3x3_open_area(self, maze: list[list[Cell]],
+                              current: Cell, neighbour: Cell) -> bool:
         """
         Checks if breaking the wall between current and neighbour would form a
         fully open 3x3 area of cells with no internal walls.
@@ -126,7 +127,8 @@ class MazeGenerator:
 
         for top_y in range(min_y, max_y + 1):
             for top_x in range(min_x, max_x + 1):
-                if 0 <= top_y and top_y + 2 < self.height and 0 <= top_x and top_x + 2 < self.width:
+                if (0 <= top_y and top_y + 2 < self.height
+                        and 0 <= top_x and top_x + 2 < self.width):
 
                     is_fully_open = True
                     for dy in range(3):
@@ -300,18 +302,34 @@ class MazeGenerator:
                     current = maze[y][x]
                     valid_neighbors = []
                     if x > 0 and current.west == 1 and not current.forty_two:
-                        if not maze[y][x - 1].forty_two and not self.creates_3x3_open_area(maze, current, maze[y][x - 1]):
+                        if not (maze[y][x - 1].forty_two
+                                and not
+                                self.creates_3x3_open_area(maze,
+                                                           current,
+                                                           maze[y][x - 1])):
                             valid_neighbors.append(maze[y][x - 1])
                     if (x < self.width - 1 and current.east == 1
                             and not current.forty_two):
-                        if not maze[y][x + 1].forty_two and not self.creates_3x3_open_area(maze, current, maze[y][x + 1]):
+                        if not (maze[y][x + 1].forty_two
+                                and not
+                                self.creates_3x3_open_area(maze,
+                                                           current,
+                                                           maze[y][x + 1])):
                             valid_neighbors.append(maze[y][x + 1])
                     if y > 0 and current.north == 1 and not current.forty_two:
-                        if not maze[y - 1][x].forty_two and not self.creates_3x3_open_area(maze, current, maze[y - 1][x]):
+                        if not (maze[y - 1][x].forty_two
+                                and not
+                                self.creates_3x3_open_area(maze,
+                                                           current,
+                                                           maze[y - 1][x])):
                             valid_neighbors.append(maze[y - 1][x])
                     if (y < self.height - 1 and current.south == 1
                             and not current.forty_two):
-                        if not maze[y + 1][x].forty_two and not self.creates_3x3_open_area(maze, current, maze[y + 1][x]):
+                        if not (maze[y + 1][x].forty_two
+                                and not
+                                self.creates_3x3_open_area(maze,
+                                                           current,
+                                                           maze[y + 1][x])):
                             valid_neighbors.append(maze[y + 1][x])
                     if valid_neighbors:
                         neighbor = self.seed.choice(valid_neighbors)

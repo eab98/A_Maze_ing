@@ -44,7 +44,7 @@ def main(stdscr: Any) -> None:
             stdscr.addstr(0, 0, "Terminal trop petit !")
             stdscr.refresh()
             return
-        
+
         cmd_h, cmd_w = 8, 60
         cmd_y = margin_top + maze_h + 1
         cmd_x = max(0, (current_w - cmd_w) // 2)
@@ -123,7 +123,6 @@ def main(stdscr: Any) -> None:
             maze = mazeGen.generate_maze(maze)
             renderer = MazeRenderer()
             draw_scene(show_path, force_animate=True)
-
 
 
 if __name__ == "__main__":

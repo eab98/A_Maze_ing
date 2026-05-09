@@ -283,7 +283,7 @@ class MazeGenerator:
 
         return deque()
 
-    def generate_maze(self, maze : list[list[Cell]]) -> list[list[Cell]]:
+    def generate_maze(self, maze: list[list[Cell]]) -> list[list[Cell]]:
         start_x, start_y = self.entry
         current: Cell | None = maze[start_y][start_x]
         if current is not None:

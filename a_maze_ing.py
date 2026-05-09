@@ -1,10 +1,11 @@
-from mazegen import MazeGenerator, EntryExitFortyTwoError
+from mazegen import MazeGenerator
 from visualizer import MazeRenderer
 from parsing import load_config
 import curses
+from typing import Any
 
 
-def main(stdscr):
+def main(stdscr: Any) -> None:
     curses.curs_set(0)
     curses.start_color()
     curses.use_default_colors()
@@ -19,7 +20,7 @@ def main(stdscr):
     forty_two = True
     try:
         mazeGen.set_forty_two(maze)
-    except ValueError as e:
+    except ValueError:
         forty_two = False
     maze = mazeGen.generate_maze(maze)
     renderer = MazeRenderer()
@@ -27,16 +28,17 @@ def main(stdscr):
     show_path = True
     path_already_animated = False
 
-    def draw_scene(show_path=True, force_animate=False):
+    def draw_scene(show_path: bool, force_animate: bool) -> None:
         nonlocal path_already_animated
-
+        show_path = True
+        force_animate = False
         stdscr.clear()
         stdscr.refresh()
 
         current_h, current_w = stdscr.getmaxyx()
         maze_h = (config.height * 2) + 1
         maze_w = (config.width * 3) + 1
-        margin_top = 5
+        margin_top = 4
         total_h = maze_h + 8 + margin_top + 2
 
         if current_h < total_h or current_w < maze_w:
@@ -119,7 +121,7 @@ def main(stdscr):
             forty_two = True
             try:
                 mazeGen.set_forty_two(maze)
-            except ValueError as e:
+            except ValueError:
                 forty_two = False
             maze = mazeGen.generate_maze(maze)
             renderer = MazeRenderer()
@@ -130,4 +132,4 @@ if __name__ == "__main__":
     try:
         curses.wrapper(main)
     except Exception as e:
-        print("On a vu tkt:\n", e)
+        print("! An error has been detected !:\n", e)

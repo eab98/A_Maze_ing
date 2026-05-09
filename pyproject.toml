@@ -10,7 +10,7 @@ authors = [
     { name="Lindsay Moreau" }
 ]
 description = "A standalone, reusable maze generation module."
-readme = "README.md"
+readme = "mazegen/README.md"
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",

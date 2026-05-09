@@ -1,4 +1,5 @@
 from collections import deque
+from sys import path
 from typing import Deque
 import random
 
@@ -43,6 +44,12 @@ class MazeGenerator:
         self.seed = random.Random(seed)
         self.path: list[str] = []
         self.path_visu: list[Cell] = []
+
+    def get_visual_solution(self) -> list[Cell]:
+        return self.path_visu
+
+    def get_solution(self) -> list[str]:
+        return self.path
 
     def empty_path(self) -> None:
         self.path = []

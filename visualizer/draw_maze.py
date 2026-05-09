@@ -2,10 +2,11 @@ from mazegen import Cell
 import curses
 import time
 import random
+from typing import Any
 
 
 class MazeRenderer:
-    def __init__(self):
+    def __init__(self) -> None:
         curses.start_color()
         self.wall_colors = [1, 2, 3, 4, 5, 6]
 
@@ -30,13 +31,14 @@ class MazeRenderer:
             maze.append(line)
         return maze
 
-    def which_color(self):
+    def which_color(self) -> int:
         return self.wall_color
 
-    def change_color(self):
+    def change_color(self) -> None:
         self.wall_color = curses.color_pair(random.choice(self.wall_colors))
 
-    def print_maze(self, stdsrc, maze, height, width, start_y, start_x):
+    def print_maze(self, stdsrc: Any, maze: Any, height: Any,
+                   width: Any, start_y: Any, start_x: Any) -> None:
         stdsrc.clear()
         WALL_COLOR = self.which_color()
         try:
@@ -69,9 +71,10 @@ class MazeRenderer:
             pass
         stdsrc.refresh()
 
-    def print_way(self, stdsrc, maze, path,
-                  height, width, start_y, start_x, entry,
-                  exit, animate=False):
+    def print_way(self, stdsrc: Any, maze: Any, path: Any,
+                  height: Any, width: Any,
+                  start_y: Any, start_x: Any, entry: Any,
+                  exit: Any, animate: bool = False) -> None:
         WAY_COLOR = curses.color_pair(11)
         try:
             stdsrc.attron(WAY_COLOR)
@@ -113,7 +116,9 @@ class MazeRenderer:
             pass
         stdsrc.refresh()
 
-    def print_forty_two(self, stdsrc, maze, height, width, start_y, start_x):
+    def print_forty_two(self, stdsrc: Any, maze: Any,
+                        height: Any, width: Any, start_y: Any,
+                        start_x: Any) -> None:
         WAY_COLOR = curses.color_pair(12)
         try:
             stdsrc.attron(WAY_COLOR)

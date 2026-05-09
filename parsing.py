@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, model_validator, field_validator
+from typing import Any
 
 
 class MazeConfig(BaseModel):
@@ -34,7 +35,7 @@ class MazeConfig(BaseModel):
     def check_coordinates(self) -> 'MazeConfig':
         entry_x, entry_y = self.entry
         exit_x, exit_y = self.exit
-        
+
         if self.entry == self.exit:
             raise ValueError("Exit coords must be different from entry coords")
 
@@ -52,7 +53,7 @@ class MazeConfig(BaseModel):
 
 
 def load_config(filepath: str) -> MazeConfig:
-    config_dict = {}
+    config_dict: dict[str, Any] = {}
 
     with open(filepath, 'r') as file:
         for line in file:
@@ -61,21 +62,3 @@ def load_config(filepath: str) -> MazeConfig:
                 key, val = line.split('=', 1)
                 config_dict[key.strip().lower()] = val.strip()
     return MazeConfig(**config_dict)
-
-# if __name__ == "__main__":
-#     try:
-#         config = load_config("config.txt")
-#         print("Configuration loaded successfully!\n")
-#         print(f"Width: {config.width}")
-#         print(f"Height: {config.height}")
-#         print(f"Entry: {config.entry}")
-#         print(f"Exit: {config.exit}")
-#         print(f"Output File: {config.output_file}")
-#         print(f"Perfect: {config.perfect}")
-#         print(f"Seed: {config.seed}")
-
-#     except ValidationError as e:
-#         print("Error: Invalid configuration data.\n")
-#         print(e)
-#     except FileNotFoundError:
-#         print("Error: 'config.txt' could not be found.")

@@ -1,10 +1,11 @@
-from mazegen import MazeGenerator, EntryExitFortyTwoError
+from mazegen import MazeGenerator
 from visualizer import MazeRenderer
 from parsing import load_config
 import curses
+from typing import Any
 
 
-def main(stdscr):
+def main(stdscr: Any) -> None:
     curses.curs_set(0)
     curses.start_color()
     curses.use_default_colors()
@@ -19,7 +20,7 @@ def main(stdscr):
     forty_two = True
     try:
         mazeGen.set_forty_two(maze)
-    except ValueError as e:
+    except ValueError:
         forty_two = False
     maze = mazeGen.generate_maze(maze)
     renderer = MazeRenderer()
@@ -27,7 +28,7 @@ def main(stdscr):
     show_path = True
     path_already_animated = False
 
-    def draw_scene(show_path=True, force_animate=False):
+    def draw_scene(show_path: bool, force_animate: bool) -> None:
         nonlocal path_already_animated
 
         stdscr.clear()
@@ -43,37 +44,7 @@ def main(stdscr):
             stdscr.addstr(0, 0, "Terminal trop petit !")
             stdscr.refresh()
             return
-
-        title_win = curses.newwin(3, current_w, 1, 0)
-        title = "=== A-MAZE-ING GENERATOR ==="
-        t_x = max(0, (current_w - len(title)) // 2)
-        title_win.attron(curses.A_BOLD | curses.A_UNDERLINE)
-        title_win.addstr(1, t_x, title)
-        title_win.refresh()
-
-        start_x = (current_w - maze_w) // 2
-        maze_win = curses.newwin(maze_h + 1, maze_w + 1, margin_top, start_x)
-
-        renderer.print_maze(maze_win, maze, config.height, config.width, 0, 0)
-        renderer.print_forty_two(maze_win,
-                                 maze,
-                                 config.height,
-                                 config.width, 0, 0)
-
-        if show_path:
-            should_animate = force_animate and not path_already_animated
-
-            renderer.print_way(
-                maze_win, maze, mazeGen.path_visu, config.height, config.width,
-                0, 0, config.entry, config.exit,
-                animate=should_animate
-            )
-
-            if should_animate:
-                path_already_animated = True
-
-        maze_win.refresh()
-
+        
         cmd_h, cmd_w = 8, 60
         cmd_y = margin_top + maze_h + 1
         cmd_x = max(0, (current_w - cmd_w) // 2)
@@ -90,6 +61,34 @@ def main(stdscr):
             cmd_win.addstr(6, 2, "Maze is too small to display 42")
             cmd_win.attroff(ALERT_COLOR)
         cmd_win.refresh()
+
+        title_win = curses.newwin(3, current_w, 1, 0)
+        title = "=== A-MAZE-ING ==="
+        t_x = max(0, (current_w - len(title)) // 2)
+        title_win.attron(curses.A_BOLD | curses.A_UNDERLINE)
+        title_win.addstr(1, t_x, title)
+        title_win.refresh()
+
+        start_x = (current_w - maze_w) // 2
+        maze_win = curses.newwin(maze_h + 1, maze_w + 1, margin_top, start_x)
+
+        renderer.print_maze(maze_win, maze, config.height, config.width, 0, 0)
+        renderer.print_forty_two(maze_win,
+                                 maze,
+                                 config.height,
+                                 config.width, 0, 0)
+
+        if show_path:
+            animate_now = force_animate and not path_already_animated
+            renderer.print_way(
+                maze_win, maze, mazeGen.path_visu, config.height, config.width,
+                0, 0, config.entry, config.exit,
+                animate=animate_now
+            )
+            if animate_now:
+                path_already_animated = True
+
+        maze_win.refresh()
 
     draw_scene(show_path, force_animate=True)
 
@@ -119,15 +118,16 @@ def main(stdscr):
             forty_two = True
             try:
                 mazeGen.set_forty_two(maze)
-            except ValueError as e:
+            except ValueError:
                 forty_two = False
             maze = mazeGen.generate_maze(maze)
             renderer = MazeRenderer()
             draw_scene(show_path, force_animate=True)
 
 
+
 if __name__ == "__main__":
     try:
         curses.wrapper(main)
     except Exception as e:
-        print("On a vu tkt:\n", e)
+        print("! An error has been detected !:\n", e)

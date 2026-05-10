@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
+
 from mazegen import MazeGenerator
 from pydantic import ValidationError
 from visualizer import MazeRenderer
 from parsing import load_config
 import curses
 from typing import Any
+import sys
 
 
 def main(stdscr: Any) -> None:
@@ -155,10 +158,18 @@ def main(stdscr: Any) -> None:
 
 
 if __name__ == "__main__":
-    try:
-        curses.wrapper(main)
-    except ValidationError as er:
-        for e in er.errors():
-            print("! An error has been detected !:\n", e['loc'][0], e['msg'])
-    except Exception as e:
-        print("! An error has been detected !:\n", e)
+    if len(sys.argv) != 2:
+        print("Please provide one and ONLY one argument")
+    elif sys.argv[1] != "config.txt":
+        print("The configuration file provided must be named 'config.txt'")
+    else:
+        try:
+            curses.wrapper(main)
+        except ValidationError as er:
+            for e in er.errors():
+                if len(e['loc']) > 0:
+                    print("! An error has been detected !:\n", e['loc'][0], e['msg'])
+                else:
+                    print("! An error has been detected !:\n", e['msg'])
+        except Exception as e:
+            print("! An error has been detected !:\n", e)

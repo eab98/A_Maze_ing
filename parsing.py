@@ -83,7 +83,7 @@ def load_config(filepath: str) -> MazeConfig:
                     key, val = line.split('=', 1)
                     conf_key = key.strip().lower()
                     if conf_key in config_dict.keys():
-                        msg = f"Field {conf_key} is repeated in the config file"
+                        msg = f"{conf_key} is repeated in the config file"
                         raise ValueError(msg)
                     config_dict[key.strip().lower()] = val.strip()
     except FileNotFoundError:

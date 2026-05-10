@@ -10,9 +10,11 @@ class MazeRenderer:
         """
         Initialize the maze renderer and configure curses color pairs.
 
-        This is where I define the color pairs used in the subsequent functions. 
-        Values from 1 to 6 correspond to wall colors, which will be selected randomly. 
-        Values from 10 to 12 correspond to the entrance and exit colors, and 42 represents the center of the maze.
+        This is where I define the color pairs used in the functions.
+        Values from 1 to 6 correspond to wall colors,
+        which will be selected randomly.
+        Values from 10 to 12 correspond to the entrance and exit colors,
+        and 42 represents the center of the maze.
         """
         curses.start_color()
         self.wall_colors = [1, 2, 3, 4, 5, 6]
@@ -49,13 +51,13 @@ class MazeRenderer:
         return maze
 
     def which_color(self) -> int:
-            """
-            Return the currently selected wall color.
+        """
+        Return the currently selected wall color.
 
-            Returns:
-            The curses color pair currently used for maze walls.
-            """
-            return self.wall_color
+        Returns:
+        The curses color pair currently used for maze walls.
+        """
+        return self.wall_color
 
     def change_color(self) -> None:
         """

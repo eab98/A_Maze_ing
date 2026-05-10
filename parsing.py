@@ -4,7 +4,8 @@ from typing import Any
 
 
 class MazeConfig(BaseModel):
-    """
+    """Hold parsed configuration values from the configuration file.
+
     Parse the configuration file using pydantic and hold values if
     parsing is successful. Raise exceptions otherwise.
     """
@@ -69,6 +70,8 @@ def load_config(filepath: str) -> MazeConfig:
     Return:
         A MazeConfig object holding the parsed configuration.
     Raises:
+        FileNotFoundError: Raised if config file cannot be found.
+        PermissionError: Raised if config file cannot be accessed.
     """
     config_dict: dict[str, Any] = {}
 
@@ -83,8 +86,8 @@ def load_config(filepath: str) -> MazeConfig:
                         msg = f"Field {conf_key} is repeated in the config file"
                         raise ValueError(msg)
                     config_dict[key.strip().lower()] = val.strip()
-    except FileNotFoundError as fne:
+    except FileNotFoundError:
         raise FileNotFoundError(f"{filepath} could not be found")
-    except PermissionError as pe:
+    except PermissionError:
         raise PermissionError(f"{filepath} could not be accessed")
     return MazeConfig(**config_dict)

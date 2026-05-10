@@ -1,3 +1,4 @@
+*This package was created as part of the 42 curriculum by bel-azzo and lmoreau.*
 This package provides a maze generator.
 
 Command to install it: 

@@ -168,7 +168,8 @@ if __name__ == "__main__":
         except ValidationError as er:
             for e in er.errors():
                 if len(e['loc']) > 0:
-                    print("! An error has been detected !:\n", e['loc'][0], e['msg'])
+                    print("! An error has been detected !:\n", e['loc'][0],
+                          e['msg'])
                 else:
                     print("! An error has been detected !:\n", e['msg'])
         except Exception as e:

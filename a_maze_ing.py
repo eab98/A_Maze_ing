@@ -7,6 +7,34 @@ from typing import Any
 
 
 def main(stdscr: Any) -> None:
+    """
+    Main entry point of the curses-based terminal application.
+
+    This function initializes the terminal interface, loads the configuration,
+    generates and displays a maze, and handles real-time user interactions
+    such as regenerating the maze, toggling path display,
+    changing colors, and exiting the program.
+
+    Main features:
+    - Initializes the curses environment
+    - Loads configuration from a file
+    - Generates a maze using MazeGenerator
+    - Renders the maze and its solution path using MazeRenderer
+    - Displays a terminal UI with commands and title
+    - Handles keyboard events:
+        * Q: quit the application
+        * R: regenerate a new maze
+        * P: show/hide the solution path
+        * C: change display colors
+
+    Args:
+        stdscr (Any): Main curses window provided by curses.wrapper.
+
+    Raises:
+        ValidationError: If configuration validation fails.
+        Exception: Any other unexpected errors are caught and printed
+        to the terminal.
+    """
     curses.curs_set(0)
     curses.start_color()
     curses.use_default_colors()

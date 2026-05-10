@@ -48,14 +48,14 @@ class MazeRenderer:
             maze.append(line)
         return maze
 
-    # def which_color(self) -> int:
-        #     """
-            #     Return the currently selected wall color.
+    def which_color(self) -> int:
+            """
+            Return the currently selected wall color.
 
-                #     Returns:
-                    #         The curses color pair currently used for maze walls.
-                        #     """
-                            #     return self.wall_color
+            Returns:
+            The curses color pair currently used for maze walls.
+            """
+            return self.wall_color
 
     def change_color(self) -> None:
         """
@@ -82,7 +82,7 @@ class MazeRenderer:
             start_x: Horizontal offset where rendering begins.
         """
         stdsrc.clear()
-        WALL_COLOR = self.change_color()
+        WALL_COLOR = self.which_color()
         try:
             stdsrc.attron(WALL_COLOR)
             for y in range(height):

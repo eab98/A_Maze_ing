@@ -36,6 +36,8 @@ This project explores several important computer science concepts:
 
 The chosen generation algorithm guarantees coherent wall consistency between neighboring cells and ensures that no isolated areas exist inside the maze. A deterministic seed system also allows identical mazes to be regenerated for debugging or testing purposes.
 
+**--------------------------------------------------------------------------------------------------------------------------**
+
 ## Instructions :
 
 #### <u>Installation and Running</u>
@@ -199,6 +201,8 @@ From our perspective, there are no major areas for improvement in this project.
 - Focused documentation research
 - Learning how to write docstrings
 - Learning the capabilities of the curses library
+
+**--------------------------------------------------------------------------------------------------------------------------**
 
 <details open>
   <br>

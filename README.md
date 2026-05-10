@@ -135,22 +135,22 @@ These components are decoupled from the main program logic and can be reused by 
 - lmoreau: visual part  (renderer, curses display, UI)
 
 
-	<u>Tools used:</u>
-	- Git (version control)
-	- GitHub (collaboration)
-	- Discord (communication)
-	- basic task splitting per day
+<u>Tools used:</u>
+- Git (version control)
+- GitHub (collaboration)
+- Discord (communication)
+- basic task splitting per day
 
-	<u>Strengths:</u>
+<u>Strengths:</u>
 
-	The task distribution was effective, based on each member’s skills. This organization allowed good complementarity and constant mutual support.
-	Collaboration was smooth, with good time management: daily goals were realistic and consistently achieved on time.
+The task distribution was effective, based on each member’s skills. This organization allowed good complementarity and constant mutual support.
+Collaboration was smooth, with good time management: daily goals were realistic and consistently achieved on time.
 
-	<u>Areas for improvement:</u>
+<u>Areas for improvement:</u>
 
-	The project was completed within the allocated time without overloading our daily workload, while working collaboratively.
-	Whenever we encountered a problem, we communicated quickly to solve it together.
-	From our perspective, there are no major areas for improvement in this project.
+The project was completed within the allocated time without overloading our daily workload, while working collaboratively.
+Whenever we encountered a problem, we communicated quickly to solve it together.
+From our perspective, there are no major areas for improvement in this project.
 
 **--------------------------------------------------------------------------------------------------------------------------**
 

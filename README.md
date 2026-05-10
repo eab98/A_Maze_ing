@@ -76,6 +76,8 @@ SEED: (Optional) Integer used to initialize the random generator, allowing repro
 ```
 
 The configuration file defines the parameters used to generate the maze. Each entry is written as KEY: VALUE.
+You can also comment out lines with #
+
 
 ```
 WIDTH: int (width of the maze in cells)

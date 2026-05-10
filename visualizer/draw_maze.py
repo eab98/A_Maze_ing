@@ -7,6 +7,13 @@ from typing import Any
 
 class MazeRenderer:
     def __init__(self) -> None:
+        """
+        Initialize the maze renderer and configure curses color pairs.
+
+        This is where I define the color pairs used in the subsequent functions. 
+        Values from 1 to 6 correspond to wall colors, which will be selected randomly. 
+        Values from 10 to 12 correspond to the entrance and exit colors, and 42 represents the center of the maze.
+        """
         curses.start_color()
         self.wall_colors = [1, 2, 3, 4, 5, 6]
 
@@ -23,6 +30,16 @@ class MazeRenderer:
         curses.init_pair(12, curses.COLOR_MAGENTA, curses.COLOR_MAGENTA)
 
     def create_maze(self, height: int, width: int) -> list[list[Cell]]:
+        """
+        Create a 2D grid of Cell objects representing the maze.
+
+        Args:
+            height: Number of rows in the maze.
+            width: Number of columns in the maze.
+
+        Returns:
+            A two-dimensional list containing initialized Cell objects.
+        """
         maze = []
         for y in range(height):
             line = []
@@ -31,16 +48,41 @@ class MazeRenderer:
             maze.append(line)
         return maze
 
-    def which_color(self) -> int:
-        return self.wall_color
+    # def which_color(self) -> int:
+        #     """
+            #     Return the currently selected wall color.
+
+                #     Returns:
+                    #         The curses color pair currently used for maze walls.
+                        #     """
+                            #     return self.wall_color
 
     def change_color(self) -> None:
+        """
+        Randomly select and apply a new wall color.
+
+        The new color is chosen from the predefined list of wall colors.
+        """
         self.wall_color = curses.color_pair(random.choice(self.wall_colors))
 
     def print_maze(self, stdsrc: Any, maze: list[list[Cell]], height: int,
                    width: int, start_y: Any, start_x: Any) -> None:
+        """
+        Render the maze structure on the terminal window.
+
+        The function draws all maze walls using ASCII characters and
+        applies the currently selected wall color.
+
+        Args:
+            stdsrc: The curses window where the maze is displayed.
+            maze: The 2D list of Cell objects representing the maze.
+            height: Number of rows in the maze.
+            width: Number of columns in the maze.
+            start_y: Vertical offset where rendering begins.
+            start_x: Horizontal offset where rendering begins.
+        """
         stdsrc.clear()
-        WALL_COLOR = self.which_color()
+        WALL_COLOR = self.change_color()
         try:
             stdsrc.attron(WALL_COLOR)
             for y in range(height):
@@ -75,6 +117,26 @@ class MazeRenderer:
                   height: int, width: int,
                   start_y: Any, start_x: Any, entry: Any,
                   exit: Any, animate: bool = False) -> None:
+        """
+        Render the solution path inside the maze.
+
+        The path is displayed with a dedicated color and can optionally
+        be animated step by step. Entry and exit cells are highlighted
+        with labels.
+
+        Args:
+            stdsrc: The curses window where the path is displayed.
+            maze: The 2D list of Cell objects representing the maze.
+            path: List of cells forming the solution path.
+            height: Number of rows in the maze.
+            width: Number of columns in the maze.
+            start_y: Vertical offset where rendering begins.
+            start_x: Horizontal offset where rendering begins.
+            entry: Coordinates of the maze entry point.
+            exit: Coordinates of the maze exit point.
+            animate: If True, displays the path progressively.
+        """
+
         WAY_COLOR = curses.color_pair(11)
         try:
             stdsrc.attron(WAY_COLOR)
@@ -119,6 +181,21 @@ class MazeRenderer:
     def print_forty_two(self, stdsrc: Any, maze: list[list[Cell]],
                         height: int, width: int, start_y: Any,
                         start_x: Any) -> None:
+        """
+        Highlight cells marked with the `forty_two` attribute.
+
+        Connected highlighted cells are visually linked when no wall
+        separates them.
+
+        Args:
+            stdsrc: The curses window where the highlighted
+            cells are displayed.
+            maze: The 2D list of Cell objects representing the maze.
+            height: Number of rows in the maze.
+            width: Number of columns in the maze.
+            start_y: Vertical offset where rendering begins.
+            start_x: Horizontal offset where rendering begins.
+        """
         WAY_COLOR = curses.color_pair(12)
         try:
             stdsrc.attron(WAY_COLOR)

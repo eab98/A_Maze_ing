@@ -5,7 +5,31 @@
 
 ### Description: 
 
-Le projet A-Maze-ing consiste à concevoir un programme capable de générer des labyrinthes parfaits (sans cycles et où chaque point est accessible) et de proposer, le cas échéant, une solution pour les résoudre. L'objectif principal est de manipuler des algorithmes de théorie des graphes et de gérer des structures de données complexes tout en respectant des contraintes de performance et de configuration.
+A-Maze-ing is a Python project focused on procedural maze generation, pathfinding, and visualization.
+The goal of the project is to create a configurable maze generator capable of producing coherent and playable mazes while respecting strict structural constraints.
+
+The program reads a configuration file describing the maze parameters (dimensions, entry and exit positions, output file, generation mode, seed, etc.), generates a random maze, computes the shortest valid path between the entrance and the exit, and exports the result using a hexadecimal wall encoding format.
+
+The project supports both perfect mazes — where only one unique path exists between two cells — and non-perfect mazes with additional openings while still preserving global connectivity.
+
+A visual representation of the maze is also included, allowing the user to:
+
+- display the maze in the terminal or graphically,
+- regenerate mazes dynamically,
+- show or hide the shortest path,
+- customize wall colors,
+- highlight the hidden “42” pattern embedded inside the maze.
+
+The maze generation logic is implemented inside a reusable standalone Python module (MazeGenerator) designed to be packaged and reused in future projects. 
+
+This project explores several important computer science concepts:
+
+- procedural generation,
+- pathfinding algorithms,
+- randomness and reproducibility,
+- software modularity and packaging.
+
+The chosen generation algorithm guarantees coherent wall consistency between neighboring cells and ensures that no isolated areas exist inside the maze. A deterministic seed system also allows identical mazes to be regenerated for debugging or testing purposes.
 
 ### Instructions : 
 installation : Clonez le dépôt et rendez-vous à la racine du projet : git clone `https://github.com/votre-repo/a-maze-ing.git`

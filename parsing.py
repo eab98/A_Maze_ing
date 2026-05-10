@@ -41,12 +41,12 @@ class MazeConfig(BaseModel):
 
         if not (0 <= entry_x < self.width) or not (0 <= entry_y < self.height):
             msg = (f"ENTRY coordinates {self.entry} are out of " +
-                   "bounds for a {self.width}x{self.height} maze.")
+                   f"bounds for a {self.width}x{self.height} maze.")
             raise ValueError(msg)
 
         if not (0 <= exit_x < self.width) or not (0 <= exit_y < self.height):
             msg = (f"EXIT coordinates {self.exit} are out of bounds for a " +
-                   "{self.width}x{self.height} maze.")
+                   f"{self.width}x{self.height} maze.")
             raise ValueError(msg)
 
         return self

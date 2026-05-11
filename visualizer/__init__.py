@@ -1,7 +1,7 @@
 """
 Maze visualization and rendering package.
 
-This package provides tools to render generated maze structures into 
+This package provides tools to render generated maze structures into
 visual formats.
 
 Exported Classes:

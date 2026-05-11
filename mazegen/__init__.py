@@ -1,4 +1,4 @@
-"""Provide classes to generate, solve, and visualize perfect or imperfect mazes.
+"""Provide classes to generate, solve and visualize perfect or imperfect mazes.
 
 This package exports the functionality required to initialize a grid of cells,
 generate a valid maze structure (preventing open 3x3 areas and embedding a

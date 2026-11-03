@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by lmoreau and bel-azzo*
+*This project has been created as part of the 42 curriculum by [lmoreau](https://github.com/lin-moreau) and bel-azzo*
 
 # [A-MAZE-ING]
 > *“A labyrinth is not a place to be lost, but a path to be found.”*
